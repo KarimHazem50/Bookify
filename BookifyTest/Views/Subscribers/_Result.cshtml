@@ -1,0 +1,38 @@
+﻿@model SubscriberSearchResultViewModel
+
+<div class="card">
+    <div class="card-body" style="padding: 50px">
+        <section class="content">
+            <div class="container-fluid">
+                @if (Model is null)
+                {
+                    <!--begin::Alert-->
+                    <div class="alert alert-warning font-weight-bolder py-4 d-flex align-items-center justify-content-between mb-0" role="alert">
+                        <p class="mb-0">No subscribers were found!</p>
+                        <a asp-action="Create" class="btn btn-primary" style="text-decoration: none;">
+                            Add Subscriber
+                            <i class="fa-solid fa-plus ml-1"></i>
+                        </a>
+                    </div>
+                    <!--end::Alert-->               
+                }
+                else
+                {
+                    <div class="d-flex justify-content-around">
+                        <div class="d-flex flex-column justify-content-center">
+                            <h4>@Model.FirstName @Model.LastName</h4>
+                            <div class="mt-4 text-center">
+                                <a asp-action="Details" asp-route-id="@Model.Key" class="btn btn-info">Details</a>
+                            </div>
+                        </div>
+                        <div>
+                            <img src="~/images/subscribers/thumb/@Model.ImageName" class="img-thumbnail" alt="ImageSbscriber" style="width: 150px">
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->

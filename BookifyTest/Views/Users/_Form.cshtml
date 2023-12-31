@@ -1,0 +1,42 @@
+﻿@model UserFormViewModel
+
+<form id="Form-User" asp-action="@(string.IsNullOrEmpty(Model.Id) ? "Create" : "Edit")" data-ajax="true" data-ajax-method="post" data-ajax-success="onModalSuccess" data-ajax-failure="showErrorMessage" data-ajax-begin="onModalBegin" data-ajax-complete="onModalComplete">
+    <div class="card-body pb-2 pl-0 pr-1">
+        <div class="form-group">
+            @if (!string.IsNullOrEmpty(Model.Id))
+            {
+                <input type="hidden" asp-for="Id" />
+            }
+            <div class="mb-3">
+                <input type="text" class="form-control css-auto-fill" placeholder="Full Name" autocomplete="off" asp-for="FullName" style="height: 50px; letter-spacing: 2px;">
+                <span asp-validation-for="FullName" class="text-danger d-block"></span>
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control css-auto-fill" placeholder="User Name" autocomplete="off" asp-for="UserName" style="height: 50px; letter-spacing: 2px;">
+                <span asp-validation-for="UserName" class="text-danger d-block"></span>
+            </div>
+            <div class="mb-3">
+                <input type="email" class="form-control css-auto-fill" placeholder="Email" autocomplete="off" asp-for="Email" style="height: 50px; letter-spacing: 2px;">
+                <span asp-validation-for="Email" class="text-danger d-block"></span>
+            </div>
+            <div class="mb-3">
+                <select class="form-control form-control-lg js-select2-roles" asp-for="SelectedRoles" asp-items="@Model.DisplayRoles" data-placeholder="Select Roles">
+                    <option value=""></option>
+                </select>
+                <span asp-validation-for="SelectedRoles" class="text-danger d-block"></span>
+            </div>
+            @if (string.IsNullOrEmpty(Model.Id))
+            {
+                 <div class="mb-3">
+                    <input type="password" class="form-control css-auto-fill" placeholder="Password" asp-for="Password" style="height: 50px; letter-spacing: 2px;">
+                    <span asp-validation-for="Password" class="text-danger d-block"></span>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control css-auto-fill" placeholder="Confirm Password" asp-for="ConfirmPassword" style="height: 50px; letter-spacing: 2px;">
+                    <span asp-validation-for="ConfirmPassword" class="text-danger d-block"></span>
+                </div>
+            }
+        </div>
+    </div>
+    <partial name="_ModalFooter" />
+</form>

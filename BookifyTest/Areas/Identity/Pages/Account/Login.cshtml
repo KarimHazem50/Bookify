@@ -1,0 +1,163 @@
+﻿@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+
+<style media="screen">
+    *,
+    *:before,
+    *:after {
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        background-color: #080710;
+    }
+
+    .background {
+        width: 430px;
+        height: 520px;
+        position: absolute;
+        transform: translate(-50%,-50%);
+        left: 50%;
+        top: 50%;
+        margin-top: 500px;
+    }
+
+        .background .shape {
+            height: 200px;
+            width: 200px;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+    .shape:first-child {
+        background: linear-gradient( #1845ad, #23a2f6 );
+        left: -80px;
+        top: -80px;
+    }
+
+    .shape:last-child {
+        background: linear-gradient( to right, #ff512f, #f09819 );
+        right: -30px;
+        bottom: -80px;
+    }
+
+    form {
+        min-height: 520px;
+        width: 400px;
+        background-color: white;
+        position: absolute;
+        transform: translate(-50%,-50%);
+        top: 49%;
+        left: 49%;
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255,255,255,0.1);
+        box-shadow: 0 0 40px rgba(8,7,16,0.6);
+        padding: 50px 35px 30px 35px;
+        margin-top: 500px;
+    }
+
+        form * {
+            font-family: 'Poppins',sans-serif;
+            color: black;
+            letter-spacing: 0.5px;
+            outline: none;
+            border: none;
+        }
+
+        form h3 {
+            font-size: 32px;
+            font-weight: 500;
+            line-height: 42px;
+            text-align: center;
+        }
+
+    label {
+        display: block;
+        margin-top: 30px;
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    input {
+        border: 1px solid #0000006e;
+        display: block;
+        height: 50px;
+        width: 100%;
+        background-color: rgba(255,255,255,0.07);
+        border-radius: 6px;
+        padding: 0 10px;
+        margin-top: 8px;
+        font-size: 14px;
+        font-weight: 300;
+        letter-spacing: 2px;
+        margin-bottom: 6px;
+        background-color: #deefff21;
+    }
+        input::placeholder {
+             color: #000000a8;
+        }
+        input:focus {
+            border: 1px solid #007aff;
+        }
+    button {
+        margin-top: 50px;
+        width: 100%;
+    }
+
+    #Input_Username-error,
+    #Input_Password-error,
+    .model-errors ul li {
+        color: #ff0000 !important;
+    }
+</style>
+<body>
+    <div class="background background-login">
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <form method="post" class="form-login" onsubmit="preventBack()">
+        <div class="d-flex justify-content-center align-items-center">
+            <div>
+                <h1>Sign In</h1>
+            </div>
+            <div>
+                <img src="~/images/login_pdn4.svg" alt="ImageLogin" style="max-width: 100%; width: 150px;" />
+            </div>
+        </div>
+
+        <label asp-for="Input.Username"></label>
+        <input type="text" asp-for="Input.Username" placeholder="Username or Email" autocomplete="off" value="">
+        <span asp-validation-for="Input.Username" class="text-danger"></span>
+
+        <label asp-for="Input.Password"></label>
+        <input type="password" asp-for="Input.Password" placeholder="Password" autocomplete="off">
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+        <div asp-validation-summary="ModelOnly" class="model-errors mt-1"></div>
+
+        <button type="submit" class="btn btn-lg btn-primary">
+            Log In
+        </button>
+
+        <div style="margin-top: 40px; text-align: center;">
+            <a id="forgot-password" asp-page="./ForgotPassword">Forgot your password?</a>
+        </div>
+    </form>
+</body>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function preventBack() { 
+            window.history.forward(); 
+        }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
+}

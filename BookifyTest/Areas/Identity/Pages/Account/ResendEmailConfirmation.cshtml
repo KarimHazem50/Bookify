@@ -1,0 +1,72 @@
+﻿@page
+@model ResendEmailConfirmationModel
+@{
+    ViewData["Title"] = "Resend email confirmation";
+}
+
+<body>
+    <div class="container" style="height: 100vh;">
+        <div class="row">
+            <div class="card text-center col-md-5 mt-3 col-sm-10 p-0">
+                <div class="card-header p-0">
+                    <img src="~/assets/images/ResendEmail.gif" alt="ResendImage" class="w-100">
+                </div>
+                <div class="card-body">
+                    <h2>@ViewData["Title"]</h2>
+                    <p>Verify your email</p>
+                </div>
+                <div class="card-footer text-muted">
+                    <form method="post">
+                        <input type="hidden" asp-for="Input.Username" class="form-control" aria-required="true" />
+                        <button type="submit" class="btn btn-primary">Send again</button>
+                    </form>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    body {
+        background-image: url('/assets/images/bg3.jpg');
+        color: rgb(190, 190, 190);       
+    }
+
+    .card {
+        box-shadow: 0px -3px 6px 0px rgb(49 201 232);
+        border-radius: 30px;
+        justify-content: center;
+        background: #0f5056 !important;
+    }
+
+    .card-body {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    .card-footer {
+        background: #000000;
+        border-bottom-left-radius: 30px !important;
+        border-bottom-right-radius: 30px !important;
+    }
+
+    .card-header {
+        border-radius: 30px !important;
+        border: 0px;
+        background: #842222;
+    }
+
+    .card-header img {
+        border-radius: 30px;
+    }
+    .row {
+        transform: translateY(25%);
+        justify-content: center;
+        margin: 0 20px;
+    }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

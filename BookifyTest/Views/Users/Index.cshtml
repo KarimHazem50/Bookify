@@ -1,0 +1,61 @@
+﻿@model IEnumerable<UsersViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery antiforgery
+
+@{
+    ViewData["Title"] = "Users";
+}
+@section CustomCss {
+    <partial name="_DataTablesFiles_CSS" />
+}
+    <!-- /.card -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center" style="padding-top: 20px !important; padding-bottom: 18px !important">
+            <div class="d-flex align-items-center">
+                <span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 18 18">
+                        <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                    </svg>
+                </span>
+                <span class="h4 ml-2 mb-0">Users</span>
+            </div>
+            <div>
+                <a href="#" class="btn btn-secondary text-decoration-none px-3 js-render-modal" data-title="Add User" data-url="/Users/Create"
+                    style="font-size: 18px; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);">
+                    Add
+                    <i class="fa-solid fa-plus fa-sm"></i>
+                </a>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body pt-3">
+            <table id="DataTable" class="table table-bordered table-striped text-center" style="line-height: 2">
+                <thead>
+                    <tr>
+                        <th>User Name</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Last Updated On</th>
+                        <th class="js-no-export">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var user in Model)
+                {
+                    <partial name="_UserRow" model="user" />
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+<input type="hidden" name="__RequestVerificationToken" value="@antiforgery.GetAndStoreTokens(Context).RequestToken" />
+@section Plugins {
+    <partial name="_DataTablesFiles_JS" />
+    <partial name="_ValidationScriptsPartial" />
+}
+@section Scripts {
+    <script src="~/js/datatable.js" asp-append-version="true"></script>
+}

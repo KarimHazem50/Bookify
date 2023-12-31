@@ -1,0 +1,121 @@
+﻿@page
+@model IndexModel
+@inject IWebHostEnvironment webHostEnvironment
+@{
+    ViewData["Title"] = "Account Settings";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    var avatarPath = $"{webHostEnvironment.WebRootPath}/Images/users/{User.FindFirst(ClaimTypes.NameIdentifier)!.Value}.png";
+
+    var avatarUrl = System.IO.File.Exists(avatarPath) ? $"/Images/users/{User.FindFirst(ClaimTypes.NameIdentifier)!.Value}.png" : "/assets/images/avatar.png";
+
+}
+
+<section class="content-header">
+    <div class="container-fluid">
+        <div class="row mb-2 justify-content-center">
+            <div class="d-flex align-items-center" style="gap: 10px">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
+                    <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z" />
+                    <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z" />
+                </svg>
+                <h1>Account Settings</h1>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card card-primary card-outline">
+                    <div class="card-body box-profile" style="padding: 3rem 3rem 2rem;">
+                        <div class="text-center">
+                            <img class="profile-user-img img-fluid img-circle" src="@avatarUrl" alt="User profile picture">
+                        </div>
+                        <h3 class="profile-username text-center">@User.FindFirst(ClaimTypes.GivenName)!.Value</h3>
+                        <p class="text-muted text-center">@User.FindFirst(ClaimTypes.Email)!.Value</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-9">
+                <div class="card">
+                    <div class="card-body" style="padding: 3rem 3rem 1rem;">
+                        <partial name="_StatusMessage" for="StatusMessage" />
+                        <div class="tab-content">
+                            <div class="tab-pane active">
+                                <form class="form-horizontal" method="post" enctype="multipart/form-data">
+                                    <div class="form-group row align-items-center" style="margin-bottom: 30px;">
+                                        <label class="col-sm-2 col-form-label">Avatar</label>
+                                        <div class="image-preview-container ml-5 ml-sm-0">
+                                            <div class="preview">
+                                                <img id="preview-selected-image" src="@avatarUrl" style="display: block;" />
+                                            </div>
+                                            <label class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow" onchange="previewImage(event);">
+                                                <i class="fa-solid fa-pencil" style="color: #A1A5B7; font-size: 14px"></i>
+                                                <!--begin::Inputs-->
+                                                <input class="inputForImage" type="file" asp-for="Input.Avatar" accept=".png, .jpg, .jpeg">
+                                                <!--end::Inputs-->
+                                            </label>
+                                            <div class="btn-cansel shadow" style="display: flex;">
+                                                <span class="btn btn-icon btn-color-muted btn-circle btn-active-color-primary w-25px h-25px bg-body shadow" style="color: #A1A5B7; font-size: 14px">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
+                                                    </svg>
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <span class="text-danger" asp-validation-for="Input.Avatar"></span>
+                                    </div>
+                                    <div class="form-group row align-items-center" style="margin-bottom: 30px;">
+                                        <label class="col-sm-2 col-form-label" asp-for="Input.FullName"></label>
+                                        <div class="col-sm-10">
+                                            <input type="text" class="form-control css-auto-fill" asp-for="Input.FullName" placeholder="Full Name" style="height: 50px;">
+                                            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row align-items-center" style="margin-bottom: 30px;">
+                                        <label class="col-sm-2 col-form-label" asp-for="Input.PhoneNumber"></label>
+                                        <div class="col-sm-10">
+                                            <input type="tel" class="form-control css-auto-fill" asp-for="Input.PhoneNumber" placeholder="Phone Number" style="height: 50px;">
+                                            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row text-center ml-0">
+                                        <div class="offset-sm-2 col-sm-10">
+                                            <div class="modal-footer justify-content-between px-0 pt-3">
+                                                <a asp-controller="Home" asp-action="Index" class="btn btn-default py-2 px-3" data-dismiss="modal">Close</a>
+                                                <button class="btn btn-primary py-2 px-3 js-indicator" type="submit">
+                                                    <span class="input-btn-form-submit">Save Changes</span>
+                                                    <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="card mt-3">
+                    <div class="card-header py-3 text-center">
+                        <h4>Sign-in Method</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex align-items-center justify-content-around">
+                            <a class="btn btn-outline-info" asp-page="./ChangePassword">Change Password</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/profile.js" asp-append-version="true"></script>
+}

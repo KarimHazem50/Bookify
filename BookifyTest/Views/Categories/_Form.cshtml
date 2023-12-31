@@ -1,0 +1,13 @@
+﻿@model CategoryFormViewModel
+<form asp-action="@(Model is null ? "Create" : "Edit")" data-ajax="true" data-ajax-method="post" data-ajax-success="onModalSuccess" data-ajax-failure="showErrorMessage" data-ajax-begin="onModalBegin" data-ajax-complete="onModalComplete">
+    <div class="card-body pb-2 pl-0 pr-1">
+        <div class="form-group">
+            @if (Model != null) {
+                <input type="hidden" asp-for="Id"/>
+            }
+            <input type="text" class="form-control css-auto-fill" placeholder="Enter Name" asp-for="Name" style="height: 50px">
+            <span asp-validation-for="Name" class="text-danger d-block"></span>
+        </div>
+    </div>
+    <partial name="_ModalFooter" />
+</form>

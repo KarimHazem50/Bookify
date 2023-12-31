@@ -1,0 +1,185 @@
+﻿@model SubscriberFormViewModel
+
+@{
+    ViewData["Title"] = "Subscriber Form";
+}
+<!-- /.card -->
+<div class="card">
+    <div class="card-header d-flex justify-content-center align-items-center py-4">
+        <div class="d-flex align-items-center">
+            <span class="h2 mb-0">@(string.IsNullOrEmpty(Model.Key) ? "Add Subscriber" : "Edit Subscriber")</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="currentColor" class="bi bi-people-fill" style="margin-top: 3px; margin-left: 15px; fill: #969696;" viewBox="0 0 18 18">
+                <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+            </svg>
+        </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body" style="padding: 50px">
+        <form method="post" asp-controller="Subscribers" enctype="multipart/form-data" id="Form">
+            @if (!string.IsNullOrEmpty(Model.Key)) {
+                <input type="hidden" asp-for="Key" />
+            }
+            <div class="form-group row mb-5">
+                <label asp-for="Image" class="col-sm-3 col-form-label" style="height: fit-content;cursor: pointer;"></label>
+                <div class="col-sm-9">
+                    <div class="image-preview-container" style="background-image: url('../../images/subscribers/Thumb/@(Model.ImageName is null ? "image-placeholder.jpg" : Model.ImageName)');">
+                        <div class="preview">
+                            <img id="preview-selected-image" />
+                        </div>
+                        <label asp-for="Image" class="btn btn-icon btn-circle btn-color-muted btn-active-color-primary w-25px h-25px bg-body shadow" onchange="previewImage(event);">
+                            <i class="fa-solid fa-pencil" style="color: #A1A5B7; font-size: 14px"></i>
+                            <!--begin::Inputs-->
+                            <input class="inputForImage mb-3" type="file" asp-for="Image" accept=".png, .jpg, .jpeg">
+                            <!--end::Inputs-->
+                        </label>
+                    </div>
+                    <span asp-validation-for="Image" class="text-danger d-block ml-3"></span>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-sm-3 col-form-label">Full Name</label>
+                <div class="col-sm-9">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-control-lg css-auto-fill mb-3" placeholder="First name" asp-for="FirstName">
+                            <span asp-validation-for="FirstName" class="text-danger d-block"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control form-control-lg css-auto-fill" placeholder="Last name" asp-for="LastName">
+                            <span asp-validation-for="LastName" class="text-danger d-block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label asp-for="DateOfBirth" class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control form-control-lg js-DateRagePicker css-auto-fill" placeholder="Date of Birth" asp-for="DateOfBirth" value="6/1/2001">
+                    <span asp-validation-for="DateOfBirth" class="text-danger d-block"></span>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label asp-for="NationalId" class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control form-control-lg css-auto-fill" placeholder="National ID" asp-for="NationalId">
+                    <span asp-validation-for="NationalId" class="text-danger d-block"></span>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-sm-3 col-form-label">Contacts</label>
+                <div class="col-sm-9">
+                    <div class="form-row align-items-center">
+                        <div class="col-md-5">
+                            <input type="email" class="form-control form-control-lg css-auto-fill mb-3" placeholder="Email" asp-for="Email">
+                            <span asp-validation-for="Email" class="text-danger d-block"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="tel" class="form-control form-control-lg css-auto-fill mb-3" placeholder="Mobile Number" asp-for="MobileNumber">
+                            <span asp-validation-for="MobileNumber" class="text-danger d-block"></span>
+                        </div>
+                        <div class="col-md-2 mb-3">
+                            <div class="form-check text-center" style="line-height: 1.8;">
+                                <input type="checkbox" class="form-check-input" asp-for="HasWhatsApp" style="width: 20px; height: 20px; margin-left: -25px;">
+                                <label class="form-check-label" asp-for="HasWhatsApp"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label class="col-sm-3 col-form-label">Governorate/Area</label>
+                <div class="col-sm-9">
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <select class="form-control form-control-lg mb-3 js-select2 js-select2-Governorate" asp-for="GovernorateId" asp-items="@Model.DisplayGovernorates" data-placeholder="Select a governorate...">
+                                <option value=""></option>
+                            </select>
+                            <span asp-validation-for="GovernorateId" class="text-danger d-block"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control form-control-lg mb-3 js-select2 js-areas" asp-for="AreaId" asp-items="@Model.DisplayAreas" data-placeholder="Select an area...">
+                                <option value=""></option>
+                            </select>
+                            <span asp-validation-for="AreaId" class="text-danger d-block"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row mb-5">
+                <label asp-for="Address" class="col-sm-3 col-form-label"></label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control form-control-lg css-auto-fill" placeholder="Address" asp-for="Address">
+                    <span asp-validation-for="Address" class="text-danger d-block"></span>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer pt-0">
+        <div class="modal-footer px-5 pt-3 justify-content-center">
+            <a asp-action="Index" class="btn btn-default py-2 px-3 ml-0" style="margin-left:-80px; margin-right: 10px;">Close</a>
+            <button class="btn btn-primary py-2 px-3 js-indicator" type="submit" form="Form">
+                <spna class="input-btn-form-submit">Save</spna>
+                <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- /.card -->
+@section Plugins {
+    <partial name="_ValidationScriptsPartial" />
+}
+    @section Scripts {
+    <script>
+        $(document).ready(function () {
+            //date range picker
+            var currentDate = new Date();
+            var maxDate = new Date(currentDate.getFullYear() - 18, currentDate.getMonth(), currentDate.getDate());
+            $('.js-DateRagePicker').daterangepicker({
+                singleDatePicker: true,
+                showDropdowns: true,
+                minYear: 1950,
+                maxDate: maxDate,
+                drops: "up"
+            });
+            $('.js-select2').select2({
+                placeholder: $(this).attr("placeholder")
+            });
+            $('.js-select2').on('select2:select', function (e) {
+                $('#Form').validate().element(e.target);
+            });
+            $('.js-select2-Governorate').on('select2:select', function (e) {
+                var id = e.target.value;
+                $.get({
+                    url: '/Subscribers/GetAreas/' + id,
+                    success: function (elements) {
+                        var areas = document.querySelector('.js-areas');
+                        areas.innerHTML = "<option value=''></option>";
+                        elements.forEach(function (option) {
+                            let newOption = document.createElement("option");
+                            newOption.value = option.id;
+                            newOption.text = option.name;
+                            areas.appendChild(newOption);
+                        });
+                    },
+                    error: function () {
+                        showErrorMessage();
+                    }
+                });
+            });
+        });
+        // Start override image preview
+        const previewImage = (event) => {
+            const imageFiles = event.target.files;
+            const imageFilesLength = imageFiles.length;
+            if (imageFilesLength > 0) {
+                const imageSrc = URL.createObjectURL(imageFiles[0]);
+                const imagePreviewElement = document.querySelector("#preview-selected-image");
+                imagePreviewElement.src = imageSrc;
+                imagePreviewElement.style.display = "block";
+                $('#Form').validate().element(event.target);
+            }
+        };
+        // End override image preview
+    </script>
+}

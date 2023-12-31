@@ -1,0 +1,252 @@
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 60px;
+}
+/*Handle List of mode*/
+.handle-menu {
+    padding: 15px 10px;
+    margin-top: 5px;
+}
+
+.handle-menu-item {
+    padding: 2px 10px;
+    line-height: 2;
+    width: 100%;
+    display: block;
+    color: #333;
+    transition-duration: 0.3s
+}
+
+    .handle-menu-item:hover {
+        background-color: whitesmoke;
+        border-radius: 6px;
+        color: #007bff !important;
+    }
+
+.mode-name {
+    padding-left: 10px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.mode-active {
+    background-color: whitesmoke;
+    border-radius: 6px;
+    color: #007bff !important;
+}
+/* Handle input auto fill */
+.css-auto-fill:-webkit-autofill,
+.css-auto-fill:-webkit-autofill:focus {
+    transition: background-color 600000s 0s, color 600000s 0s;
+}
+/* Handle bootboxjs */
+/* override switch input */
+.btn-danger:hover {
+    background-color: #ed0c22 !important;
+    border-color: #ed0c22 !important;
+    box-shadow: 0 0 0 0 rgb(225 83 97 / 50%) !important;
+}
+.custom-control-label {
+    font-weight: 500 !important;
+}
+.custom-control-label::before {
+    left: -3.25rem !important;
+    width: 2.75rem !important;
+    height: 1.5rem !important;
+    border-radius: 0.75rem !important;
+}
+
+.custom-switch .custom-control-label::after {
+    top: 6px !important;
+    left: calc(-3.25rem + 3px) !important;
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+}
+
+.custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+    -webkit-transform: translateX(1.2rem) !important;
+    transform: translateX(1.25rem) !important;
+}
+/* Start Animation */
+@keyframes flash {
+    0%, 50%, 100% {
+        opacity: 1;
+    }
+
+    25%, 75% {
+        opacity: 0;
+    }
+}
+
+.flash {
+    animation-name: flash;
+    animation-duration: 1s;
+}
+/* End Animation */
+
+
+/* Start Image for book */
+.image-preview-container {
+    width: 180px;
+    height: 220px;
+    position: relative;
+    border-radius: 10px;
+    background-position: center;
+    background-size: cover;
+    border: 3px solid #607d8b;
+}
+
+.preview {
+    height: 100%;
+}
+
+.image-preview-container img {
+    width: 100%;
+    display: none;
+    height: 100%;
+    border-radius: 7px;
+}
+
+.image-preview-container input {
+    display: none;
+}
+
+.image-preview-container label {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ffff;
+    right: -15px;
+    top: -15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.btn-cansel {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ffff;
+    right: -15px;
+    bottom: -15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    display: none;
+}
+.hanlde-align-image {
+    margin-left: 40px;
+}
+/* End Image for book */
+/* Start override full light box image for book*/
+.custom-lightBox-image {
+    width: 100%;
+    height: 100%;
+    background-color: #2a25254f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition-duration: 0.3s;
+    opacity: 0;
+}
+.custom-lightBox-image svg {
+    color: white;
+    width: 30px;
+    height: 30px;
+}
+a.overlay:hover .custom-lightBox-image {
+    opacity: 1;
+}
+@media (max-width: 576px) {
+    .image-book-details {
+        position: relative;
+        left: calc(50% - 75px);
+    }
+}
+/* End override full light box image for book*/
+/* Start override column for book in books dataTable*/
+.symbol {
+    display: inline-block;
+    flex-shrink: 0;
+    position: relative;
+    border-radius: 0.475rem;
+}
+.symbol.symbol-50px .symbol-label {
+    width: 60px;
+    height: 90px;
+}
+/* End override column for book in books dataTable*/
+.dark-mode .bootbox-body {
+    color: white;
+}
+/*dropdown menu for accout*/
+a.user-panel {
+    display: flex;
+    align-items: center;
+}
+a.user-panel:hover .a-hover {
+    color: white;
+}
+a.user-panel:hover .a-non-hover {
+    color: #c2c7d0;
+}
+.sidebar .dropdown-toggle::after {
+    display: none;
+}
+.sidebar .dropdown-item:hover {
+    background-color: #007bff !important;
+    color: #fff !important;
+}
+.sidebar .dropdown-menu {
+    background-color: rgb(40, 52, 64);
+    box-shadow: -2px 0px 14px 10px rgb(0 0 0 / 50%);
+    position: relative;
+}
+.sidebar .dropdown-menu:before {
+    content: "";
+    position: absolute;
+    border: 10px solid;
+    border-color: transparent transparent rgb(40, 52, 64) transparent;
+    top: -20px;
+    left: 102px;
+}
+/* Data table for book */
+.th-book {
+    width: auto !important;
+    padding: 10px 20px !important;
+    min-height: 43px;
+}
+/* Loog in */
+@media (max-width: 576px) {
+    .form-login {
+        width: 380px;
+        margin-top: 420px;
+    }
+
+    .background-login {
+        width: 330px !important;
+        margin-top: 420px !important;
+    }
+}
+@media (min-width: 1200px) {
+    .asideDetails {
+        width: 400px !important;
+    }
+}

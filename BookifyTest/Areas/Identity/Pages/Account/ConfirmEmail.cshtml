@@ -1,0 +1,65 @@
+﻿@page
+@model ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="card text-center col-md-5 mt-3 col-sm-10 p-0">
+                <div class="card-header p-0">
+                    <img src="~/assets/images/confirmemail.gif" alt="WelcomeImage" class="w-100">
+                </div>
+                <div class="card-body">
+                    <h1>Your Welcome</h1>
+                    <p>Eng: Karim Hazem</p>
+                </div>
+                <div class="card-footer text-muted">
+                    <a class="btn btn-primary" asp-page="./Login" asp-route-returnUrl="/"  style="border-radius: 6px; margin-bottom: 6px;">
+                        Login Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<style>
+    body {
+        background-image: url('/assets/images/bg3.jpg');
+        color: rgb(190, 190, 190);
+    }
+
+    .card {
+        box-shadow: 0px -3px 6px 0px rgb(49 201 232);
+        border-radius: 30px;
+        justify-content: center;
+    }
+
+    .card-body {
+        background: #ffffff;
+    }
+
+    .card-footer {
+        background: #000000;
+        border-bottom-left-radius: 30px !important;
+        border-bottom-right-radius: 30px !important;
+    }
+
+    .card-header {
+        border-radius: 30px !important;
+        border: 0px;
+        background: #842222;
+    }
+
+        .card-header img {
+            border-radius: 30px;
+        }
+
+    .row {
+        transform: translateY(25%);
+        justify-content: center;
+        margin: 0 20px;
+    }
+</style>

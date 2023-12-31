@@ -1,0 +1,89 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BookifyTest</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="~/plugins/fontawesome-free/css/all.min.css" />
+    <link href="~/lib/tinymce/skins/content/tinymce-5-dark/content.min.css" rel="stylesheet" />
+    <!-- Select2 -->
+    <link href="~/lib/select2/css/select2.css" rel="stylesheet" />
+    <!-- date range picker -->
+    <link href="~/lib/bootstrap-daterangepicker/daterangepicker.min.css" rel="stylesheet" />
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="~/plugins/overlayscrollbars/css/overlayscrollbars.min.css" />
+    @await RenderSectionAsync("CustomCss", required: false)
+    <!-- Theme style -->
+    <link href="~/assets/css/adminlte.min.css" rel="stylesheet" />
+    <!-- SweetAlert -->
+    <link href="~/lib/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet" />
+
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/BookifyTest.styles.css" asp-append-version="true" />
+</head>
+<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed" style="height: auto; margin-bottom: 0;">
+    <!--begin::Theme mode setup on page load-->
+    <script>var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.classList.contains("dark-mode")) { themeMode = "dark-mode"; } else { if (localStorage.getItem("theme") !== null) { themeMode = "dark-mode"; } else { themeMode = defaultThemeMode; } } document.documentElement.classList.add(themeMode); }</script>
+    <!--end::Theme mode setup on page load-->
+    <div class="wrapper">
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__wobble img-circle" src="~/assets/images/Logo_sm.png" alt="AdminLTELogo" height="60" width="60">
+            <p class="animation__wobble mt-1">Loading...</p>
+        </div>
+        @if (SignInManager.IsSignedIn(User))
+        {
+            <div class="root">
+                <partial name="_Header" />
+                <partial name="_Aside" />
+                <!-- Content Wrapper. Contains page content -->
+                <div class="content-wrapper" style="min-height: 656px;">
+                    <div class="content-header">
+                        <section class="content">
+                            <div class="container-fluid">
+                                @RenderBody()
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            @RenderBody()
+        }
+    </div>
+    <!-- ./wrapper -->
+    <!-- Start Modal -->
+    <partial name="_Modal" />
+    <!-- End Modal -->
+    <!-- REQUIRED SCRIPTS -->
+    <!-- FontAwesome-->
+    <script src="~/plugins/fontawesome-free/js/all.min.js"></script>
+    <!-- jQuery -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <!-- bootboxjs-->
+    <script src="~/lib/bootbox.js/bootbox.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- overlayScrollbars -->
+    <script src="~/plugins/overlayscrollbars/js/jquery.overlayscrollbars.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="~/assets/js/adminlte.js"></script>
+    <!-- SweetAlert -->
+    <script src="~/lib/sweetalert2/dist/sweetalert2.all.min.js"></script>
+    <!-- Select2 -->
+    <script src="~/lib/select2/js/select2.min.js"></script>
+    <!-- date range picker -->
+    <script src="~/lib/bootstrap-daterangepicker/moment.min.js"></script>
+    <script src="~/lib/bootstrap-daterangepicker/daterangepicker.min.js"></script>
+
+    @await RenderSectionAsync("Plugins", required: false)
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

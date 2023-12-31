@@ -1,0 +1,54 @@
+﻿@model IEnumerable<CategoryViewModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+@section CustomCss {
+    <partial name="_DataTablesFiles_CSS" />
+}
+    <!-- /.card -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center" style="padding-top: 20px !important; padding-bottom: 18px !important">
+            <div class="d-flex align-items-center">
+                <i class="fa-solid fa-layer-group fa-lg"></i>
+                <span class="h4 ml-2 mb-0">Categories</span>
+            </div>
+            <div>
+                <a href="#" class="btn btn-secondary text-decoration-none px-3 js-render-modal" data-title="Add Category" data-url="/Categories/Create"
+               style="font-size: 18px; position: absolute; right: 20px; top: 50%; transform: translateY(-50%);">
+                    Add
+                    <i class="fa-solid fa-plus fa-sm"></i>
+                </a>
+            </div>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body pt-3">
+            <table id="DataTable" class="table table-bordered table-striped text-center" style="line-height: 2">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Created On</th>
+                        <th>Last Updated On</th>
+                        <th class="js-no-export">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var category in Model)
+                {
+                    <partial name="_CategoryRow" model="@category" />
+                }
+            </tbody>
+        </table>
+    </div>
+    <!-- /.card-body -->
+</div>
+<!-- /.card -->
+@Html.AntiForgeryToken()
+@section Plugins {
+    <partial name="_DataTablesFiles_JS" />
+    <partial name="_ValidationScriptsPartial" />
+}
+@section Scripts {
+    <script src="~/js/datatable.js" asp-append-version="true"></script>
+}
