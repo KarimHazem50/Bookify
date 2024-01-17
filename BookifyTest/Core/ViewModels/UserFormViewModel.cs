@@ -26,7 +26,7 @@ namespace BookifyTest.Core.ViewModels
         [RequiredIf("Id == null", ErrorMessage = Errors.RequiredFiled)]
         public string? Password { get; set; }
 
-        [DataType(DataType.Password), Compare("Password", ErrorMessage = Errors.InvalidConfirmPassword), Display(Name = "Confirm password")]
+        [DataType(DataType.Password), Compare(nameof(Password), ErrorMessage = Errors.InvalidConfirmPassword), Display(Name = "Confirm password")]
         [RequiredIf("Id == null", ErrorMessage = Errors.RequiredFiled)]
         public string? ConfirmPassword { get; set; }
     }

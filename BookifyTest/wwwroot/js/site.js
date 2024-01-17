@@ -32,7 +32,7 @@ $(document).ready(function () {
     });
     // Handle signout
     document.querySelector(".js-signout")?.addEventListener('click', function () {
-       $('#SignOut').submit();
+        document.getElementById('SignOut').submit();
     })
 });
 /* Start Handle Dark Mode */
@@ -134,7 +134,7 @@ document.addEventListener('click', function (e) {
             url: e.target.getAttribute("data-url"),
             success: function (form) {
                 modalBody.innerHTML = form;
-                $.validator.unobtrusive.parse(modalBody)
+                $.validator.unobtrusive.parse(modalBody)         
                 if (e.target.getAttribute("data-edit") === "Yes") {
                     Updated = e.target.closest("tr");
                 }

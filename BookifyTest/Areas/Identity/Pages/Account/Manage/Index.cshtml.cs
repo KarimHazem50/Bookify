@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
 
 namespace BookifyTest.Areas.Identity.Pages.Account.Manage
 {
@@ -8,15 +9,17 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IImageService _imageService;
-
+        private readonly IWebHostEnvironment _webHostEnvironment;
         public IndexModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            IImageService imageService)
+            IImageService imageService,
+            IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _imageService = imageService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         public string Username { get; set; }
@@ -33,16 +36,20 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
             public string FullName { get; set; } = null!;
 
             [Phone]
-            [Display(Name = "Phone Number"),MaxLength(11, ErrorMessage = Errors.MaxLength), RegularExpression(RegexPatterns.MobileNumber, ErrorMessage = Errors.InvalidMobileNumber)]
+            [Display(Name = "Phone Number"), MaxLength(11, ErrorMessage = Errors.MaxLength), RegularExpression(RegexPatterns.MobileNumber, ErrorMessage = Errors.InvalidMobileNumber)]
             public string? PhoneNumber { get; set; }
 
-           public IFormFile? Avatar { get; set; }
+            public IFormFile? Avatar { get; set; }
+
+            public bool DeletedImage { get; set; }
         }
 
         private async Task LoadAsync(ApplicationUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+
+            _imageService.Delete($"{user.Id}.png", "/Images/users/removedImages", HasThumbnailPath: false);
 
             Username = userName;
 
@@ -81,16 +88,33 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
 
             if (Input.Avatar is not null)
             {
+                var sourceImagePath = Path.Combine($"{_webHostEnvironment.WebRootPath}/Images/users", $"{user.Id}.png");
+                var destinationImagePath = Path.Combine($"{_webHostEnvironment.WebRootPath}/Images/users/removedImages", $"{user.Id}.png");
+
+                if (System.IO.File.Exists(sourceImagePath))
+                {
+                    System.IO.File.Copy(sourceImagePath, destinationImagePath, true);
+                }
+                
+
                 _imageService.Delete($"{user.Id}.png", "/Images/users", HasThumbnailPath: false);
-                var (isUploaded,  errorMessage) = await _imageService.UploadAsync(Input.Avatar, $"{user.Id}.png", "/Images/users", hasThumbnail: false);
+
+                var (isUploaded, errorMessage) = await _imageService.UploadAsync(Input.Avatar, $"{user.Id}.png", "/Images/users", hasThumbnail: false);
+
                 if (!isUploaded)
                 {
+                    if (System.IO.File.Exists(destinationImagePath))
+                    {
+                        System.IO.File.Copy(destinationImagePath, sourceImagePath, true);
+                    }
+                       
                     ModelState.AddModelError("Input.Avatar", errorMessage!);
                     await LoadAsync(user);
                     return Page();
                 }
             }
-            if (Input.Avatar is null)
+
+            if (Input.Avatar is null && Input.DeletedImage)
             {
                 _imageService.Delete($"{user.Id}.png", "/Images/users", HasThumbnailPath: false);
                 await LoadAsync(user);

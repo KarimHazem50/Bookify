@@ -16,11 +16,14 @@
                     <p>Verify your email</p>
                 </div>
                 <div class="card-footer text-muted">
-                    <form method="post">
+                    <form method="post" class="d-flex justify-content-around">
                         <input type="hidden" asp-for="Input.Username" class="form-control" aria-required="true" />
-                        <button type="submit" class="btn btn-primary">Send again</button>
+                        <button type="submit" class="btn btn-primary js-indicator">
+                            <span class="input-btn-form-submit" style="color: unset;">Send again</span>
+                            <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+                        </button>
+                        <a asp-page="./Login" asp-route-returnUrl="/" class="btn btn-info align-self-center m-y-2" style="width: fit-content">Go to Login Now</a>
                     </form>
-                   
                 </div>
             </div>
         </div>
@@ -30,7 +33,7 @@
 <style>
     body {
         background-image: url('/assets/images/bg3.jpg');
-        color: rgb(190, 190, 190);       
+        color: rgb(190, 190, 190);
     }
 
     .card {
@@ -57,9 +60,10 @@
         background: #842222;
     }
 
-    .card-header img {
-        border-radius: 30px;
-    }
+        .card-header img {
+            border-radius: 30px;
+        }
+
     .row {
         transform: translateY(25%);
         justify-content: center;

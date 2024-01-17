@@ -45,6 +45,9 @@
                         <div class="tab-content">
                             <div class="tab-pane active">
                                 <form class="form-horizontal" method="post" enctype="multipart/form-data">
+
+                                    <input type="hidden" id="CheckDeleted" asp-for="Input.DeletedImage" />
+
                                     <div class="form-group row align-items-center" style="margin-bottom: 30px;">
                                         <label class="col-sm-2 col-form-label">Avatar</label>
                                         <div class="image-preview-container ml-5 ml-sm-0">
@@ -105,6 +108,7 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center justify-content-around">
                             <a class="btn btn-outline-info" asp-page="./ChangePassword">Change Password</a>
+                            <a class="btn btn-outline-info" asp-page="./Email">Change Email</a>
                         </div>
                     </div>
                 </div>

@@ -30,7 +30,7 @@ namespace BookifyTest.Services
             stream.Dispose();
 
            if (hasThumbnail)
-            {
+           {
                 var ThumbPath = Path.Combine($"{_webHostEnvironment.WebRootPath}{folderPath}/Thumb", imageName);
 
                 using var loadedImage = Image.Load(image.OpenReadStream());
@@ -38,7 +38,7 @@ namespace BookifyTest.Services
                 var height = loadedImage.Height / ratio;
                 loadedImage.Mutate(i => i.Resize(width: 175, height: (int)height));
                 loadedImage.Save(ThumbPath);
-            }
+           }
 
             return (isUploaded: true, errorMessage: null);
         }

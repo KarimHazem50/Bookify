@@ -76,11 +76,11 @@ namespace BookifyTest.Controllers
                     protocol: Request.Scheme);
 
                 var body = _emailBodyBuilder.GetEmailBody(
-                                                            imageUrl: "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg",
-                                                            header: $"Hey {user.FullName} , thanks for joining us!",
-                                                            body: "please confirm your email",
-                                                            url: HtmlEncoder.Default.Encode(callbackUrl!),
-                                                            linkTitle: "Active Account!");
+                                                        imageUrl: "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg",
+                                                        header: $"Hey {user.FullName} , thanks for joining us!",
+                                                        body: "please confirm your email",
+                                                        url: HtmlEncoder.Default.Encode(callbackUrl!),
+                                                        linkTitle: "Active Account!");
 
                 await _emailSender.SendEmailAsync(user.Email, "Confirm your email", body);
 
@@ -204,13 +204,18 @@ namespace BookifyTest.Controllers
 
             if (result.Succeeded)
             {
+                //var currentRoles = await _userManager.GetRolesAsync(user);
+                //var rolesUpdated = !currentRoles.SequenceEqual(model.SelectedRoles);
+                //if (rolesUpdated)
+                //{
+                //    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                //    await _userManager.AddToRolesAsync(user, model.SelectedRoles);
+                //}
+
                 var currentRoles = await _userManager.GetRolesAsync(user);
-                var rolesUpdated = !currentRoles.SequenceEqual(model.SelectedRoles);
-                if (rolesUpdated)
-                {
-                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                    await _userManager.AddToRolesAsync(user, model.SelectedRoles);
-                }
+
+                await _userManager.RemoveFromRolesAsync(user, currentRoles.Except(model.SelectedRoles));
+                await _userManager.AddToRolesAsync(user, model.SelectedRoles.Except(currentRoles));
 
                 await _userManager.UpdateSecurityStampAsync(user);
 

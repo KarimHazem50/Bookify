@@ -40,6 +40,7 @@
             var viewModel = _mapper.Map<CategoryViewModel>(category);
             return PartialView("_CategoryRow", viewModel);
         }
+        [AjaxOnly]
         public IActionResult Edit(int id)
         {
             var category = _context.Categories.Find(id);
