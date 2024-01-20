@@ -1,6 +1,5 @@
 ﻿using BookifyTest.Settings;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
@@ -20,7 +19,7 @@ namespace BookifyTest.Services
 
         public async Task SendEmailAsync(string email, string subject, string htmlMessage)
         {
-            MailMessage message = new()
+            var message = new MailMessage()
             {
                 From = new MailAddress(_mailSettings.Email!, _mailSettings.DisplayName),
                 Body = htmlMessage,
@@ -29,16 +28,26 @@ namespace BookifyTest.Services
             };
             message.To.Add(_webHostEnvironment.IsDevelopment() ? "karimhazem074@gmail.com" : email);
 
-            SmtpClient smtpClient = new(_mailSettings.Host)
+            var smtpClient = new SmtpClient()
             {
+                Host = _mailSettings.Host!,
                 Port = _mailSettings.Port,
                 Credentials = new NetworkCredential(_mailSettings.Email, _mailSettings.Password),
-                EnableSsl = true
+                EnableSsl = true,
             };
-
-            await smtpClient.SendMailAsync(message);
-
-            smtpClient.Dispose();
+            try
+            {
+                await smtpClient.SendMailAsync(message);
+                Console.WriteLine("Send mail successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                smtpClient.Dispose();
+            }
         }
     }
 }

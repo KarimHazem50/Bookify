@@ -16,6 +16,7 @@ const previewImage = (event) => {
         imagePreviewElement.src = imageSrc;
         imageProfileLeft.src = imageSrc;
         btnCanselImage.style.display = "flex";
+        document.querySelector('#CheckDeleted').value = false;
     }
 };
 
@@ -24,6 +25,7 @@ btnCanselImage.onclick = function () {
     imageProfileLeft.src = defaultAvatarSource;
     btnCanselImage.style.display = "none";
     document.querySelector(".inputForImage").value = null;
+    document.querySelector('#CheckDeleted').value = true;
 }
 document.querySelector(".nav-link").addEventListener('click', function () {
     document.querySelector(".image-preview-container").classList.toggle('hanlde-align-image');

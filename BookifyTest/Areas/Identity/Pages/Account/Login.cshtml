@@ -142,8 +142,9 @@
         <span asp-validation-for="Input.Password" class="text-danger"></span>
         <div asp-validation-summary="ModelOnly" class="model-errors mt-1"></div>
 
-        <button type="submit" class="btn btn-lg btn-primary">
-            Log In
+        <button type="submit" class="btn btn-lg btn-primary js-indicator">
+            <span class="input-btn-form-submit" style="color: unset;">Log In</span>
+            <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
         </button>
 
         <div style="margin-top: 40px; text-align: center;">

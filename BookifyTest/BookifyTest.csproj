@@ -24,7 +24,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\Images\users\" />
+    <Folder Include="wwwroot\Images\users\removedImages\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\templates\notification.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

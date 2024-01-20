@@ -1,7 +1,6 @@
-﻿using BookifyTest.Core.Models;
-using Microsoft.AspNetCore.DataProtection;
+﻿using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using SixLabors.ImageSharp;
 
 namespace BookifyTest.Controllers
 {
@@ -11,12 +10,16 @@ namespace BookifyTest.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IImageService _imageService;
+        private readonly IEmailBodyBuilder _emailBodyBuilder;
+        private readonly IEmailSender _emailSender;
         private readonly IDataProtector _dataProtector;
-        public SubscribersController(ApplicationDbContext context, IMapper mapper, IImageService imageService, IDataProtectionProvider dataProtector)
+        public SubscribersController(ApplicationDbContext context, IMapper mapper, IImageService imageService, IEmailBodyBuilder emailBodyBuilder, IEmailSender emailSender, IDataProtectionProvider dataProtector)
         {
             _context = context;
             _mapper = mapper;
             _imageService = imageService;
+            _emailBodyBuilder = emailBodyBuilder;
+            _emailSender = emailSender;
             _dataProtector = dataProtector.CreateProtector("MySecureKey");
         }
         private SubscriberFormViewModel PopulateData(SubscriberFormViewModel? model = null)
@@ -27,7 +30,7 @@ namespace BookifyTest.Controllers
 
             viewModel.DisplayGovernorates = _mapper.Map<IEnumerable<SelectListItem>>(Governorates);
 
-            if(viewModel.GovernorateId > 0)
+            if (viewModel.GovernorateId > 0)
             {
                 var areas = _context.Areas.Where(a => !a.IsDeleted && a.GovernorateId == viewModel.GovernorateId).OrderBy(g => g.Name).ToList();
                 viewModel.DisplayAreas = _mapper.Map<IEnumerable<SelectListItem>>(areas);
@@ -65,7 +68,7 @@ namespace BookifyTest.Controllers
         [AjaxOnly]
         public IActionResult GetAreas(int id)
         {
-            var areas = _context.Areas.Where(a => !a.IsDeleted && a.GovernorateId == id).Select(a => new {a.Id, a.Name}).OrderBy(a => a.Name).ToList();
+            var areas = _context.Areas.Where(a => !a.IsDeleted && a.GovernorateId == id).Select(a => new { a.Id, a.Name }).OrderBy(a => a.Name).ToList();
             return Ok(areas);
         }
 
@@ -98,13 +101,24 @@ namespace BookifyTest.Controllers
                 CreatedById = subscriber.CreatedById,
                 CreatedOn = subscriber.CreatedOn,
                 StartDate = DateTime.Today,
-                EndDate= DateTime.Today.AddYears(1)
+                EndDate = DateTime.Today.AddYears(1)
             };
 
             subscriber.Subscriptions.Add(subscription);
 
             _context.Subscribers.Add(subscriber);
             _context.SaveChanges();
+
+
+            var placehoders = new Dictionary<string, string>()
+            {
+                {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
+                {"header", $"Welcome {subscriber.FirstName}"},
+                {"body", "thanks for joining Bookify 😍"},
+            };
+            var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Notification, placehoders: placehoders);
+            await _emailSender.SendEmailAsync(subscriber.Email, "Welcome to Bookify", body);
+
 
             var subscriberId = _dataProtector.Protect(subscriber.Id.ToString());
             return RedirectToAction(nameof(Details), new { id = subscriberId });
@@ -114,11 +128,11 @@ namespace BookifyTest.Controllers
             var subscriber = _context.Subscribers.SingleOrDefault(s => s.Email == model.Email);
 
             var id = 0;
-            if(!string.IsNullOrEmpty(model.Key))
+            if (!string.IsNullOrEmpty(model.Key))
             {
-                 id = int.Parse(_dataProtector.Unprotect(model.Key));
+                id = int.Parse(_dataProtector.Unprotect(model.Key));
             }
-               
+
             var isAllowed = subscriber is null || id == subscriber.Id;
 
             return Json(isAllowed);
@@ -193,7 +207,7 @@ namespace BookifyTest.Controllers
                 else
                 {
                     ModelState.AddModelError(nameof(model.Image), result.errorMessage!);
-                        model.ImageName = subscriber.ImageName;
+                    model.ImageName = subscriber.ImageName;
                     return View("Form", PopulateData(model));
                 }
             }
@@ -207,7 +221,7 @@ namespace BookifyTest.Controllers
             subscriber.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Details), new {id = model.Key });
+            return RedirectToAction(nameof(Details), new { id = model.Key });
         }
         public IActionResult Details(string id)
         {
@@ -224,9 +238,9 @@ namespace BookifyTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult RenewSubscription(string sKey)
+        public async Task<IActionResult> RenewSubscriptionAsync(string sKey)
         {
-            var id = int.Parse(_dataProtector.Unprotect(sKey)); 
+            var id = int.Parse(_dataProtector.Unprotect(sKey));
             var subscriber = _context.Subscribers.Include(s => s.Subscriptions).SingleOrDefault(s => s.Id == id);
             if (subscriber is null)
                 return NotFound();
@@ -247,6 +261,16 @@ namespace BookifyTest.Controllers
             subscriber.Subscriptions.Add(newSubscription);
 
             _context.SaveChanges();
+
+
+            var placehoders = new Dictionary<string, string>()
+            {
+                {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
+                {"header", $"Hello {subscriber.FirstName}"},
+                {"body", $"Your subscription has been renewed {subscriber.Subscriptions.Last().EndDate.ToString("d MMM yyyy")} 😍"},
+            };
+            var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Notification, placehoders: placehoders);
+            await _emailSender.SendEmailAsync(subscriber.Email, "Welcome to Bookify", body);
 
             var viewModel = _mapper.Map<SubscriptionViewModel>(newSubscription);
             return PartialView("_SubscriptionRow", viewModel);

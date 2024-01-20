@@ -118,7 +118,7 @@
     <div class="card-footer pt-0">
         <div class="modal-footer px-5 pt-3 justify-content-center">
             <a asp-action="Index" class="btn btn-default py-2 px-3 ml-0" style="margin-left:-80px; margin-right: 10px;">Close</a>
-            <button class="btn btn-primary py-2 px-3 js-indicator" type="submit" form="Form">
+            <button class="btn btn-primary py-2 px-3 js-indicator" type="submit" form="Form" onclick="window.history.replaceState({}, '', '@Url.Action("Index", "Subscribers")');">
                 <spna class="input-btn-form-submit">Save</spna>
                 <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
             </button>
@@ -129,57 +129,6 @@
 @section Plugins {
     <partial name="_ValidationScriptsPartial" />
 }
-    @section Scripts {
-    <script>
-        $(document).ready(function () {
-            //date range picker
-            var currentDate = new Date();
-            var maxDate = new Date(currentDate.getFullYear() - 18, currentDate.getMonth(), currentDate.getDate());
-            $('.js-DateRagePicker').daterangepicker({
-                singleDatePicker: true,
-                showDropdowns: true,
-                minYear: 1950,
-                maxDate: maxDate,
-                drops: "up"
-            });
-            $('.js-select2').select2({
-                placeholder: $(this).attr("placeholder")
-            });
-            $('.js-select2').on('select2:select', function (e) {
-                $('#Form').validate().element(e.target);
-            });
-            $('.js-select2-Governorate').on('select2:select', function (e) {
-                var id = e.target.value;
-                $.get({
-                    url: '/Subscribers/GetAreas/' + id,
-                    success: function (elements) {
-                        var areas = document.querySelector('.js-areas');
-                        areas.innerHTML = "<option value=''></option>";
-                        elements.forEach(function (option) {
-                            let newOption = document.createElement("option");
-                            newOption.value = option.id;
-                            newOption.text = option.name;
-                            areas.appendChild(newOption);
-                        });
-                    },
-                    error: function () {
-                        showErrorMessage();
-                    }
-                });
-            });
-        });
-        // Start override image preview
-        const previewImage = (event) => {
-            const imageFiles = event.target.files;
-            const imageFilesLength = imageFiles.length;
-            if (imageFilesLength > 0) {
-                const imageSrc = URL.createObjectURL(imageFiles[0]);
-                const imagePreviewElement = document.querySelector("#preview-selected-image");
-                imagePreviewElement.src = imageSrc;
-                imagePreviewElement.style.display = "block";
-                $('#Form').validate().element(event.target);
-            }
-        };
-        // End override image preview
-    </script>
+@section Scripts {
+    <script src="~/js/subscriberform.js" asp-append-version="true"></script>
 }
