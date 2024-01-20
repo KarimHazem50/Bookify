@@ -62,12 +62,16 @@ namespace BookifyTest.Areas.Identity.Pages.Account
                 values: new { userId = userId, code = code },
                 protocol: Request.Scheme);
 
-            var body = _emailBodyBuilder.GetEmailBody(
-                                                             imageUrl: "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg",
-                                                             header: $"Hey {user.FullName} , thanks for joining us!",
-                                                             body: "please confirm your email",
-                                                             url: HtmlEncoder.Default.Encode(callbackUrl!),
-                                                             linkTitle: "Active Account!");
+            var placehoders = new Dictionary<string, string>()
+                {
+                    {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
+                    {"header", $"Hey {user.FullName} , thanks for joining us!"},
+                    {"body", "please confirm your email"},
+                    {"url", HtmlEncoder.Default.Encode(callbackUrl!)},
+                    {"linkTitle", "Active Account!"}
+                };
+
+            var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Email, placehoders: placehoders);
 
             await _emailSender.SendEmailAsync(user.Email, "Confirm your email", body);
 

@@ -52,12 +52,18 @@ namespace BookifyTest.Areas.Identity.Pages.Account
                     values: new { area = "Identity", code },
                     protocol: Request.Scheme);
 
-                var body = _emailBodyBuilder.GetEmailBody(
-                                                           imageUrl: "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg",
-                                                           header: $"Hey {user.FullName}",
-                                                           body: "please click the below button to reset your password",
-                                                           url: HtmlEncoder.Default.Encode(callbackUrl!),
-                                                           linkTitle: "Reset Password!");
+
+
+                var placehoders = new Dictionary<string, string>()
+                {
+                    {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
+                    {"header", $"Hey {user.FullName}"},
+                    {"body", "please click the below button to reset your password"},
+                    {"url", HtmlEncoder.Default.Encode(callbackUrl!)},
+                    {"linkTitle", "Reset Password!"}
+                };
+
+                var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Email, placehoders: placehoders);
 
                 await _emailSender.SendEmailAsync(Input.Email, "Reset Password", body);
 

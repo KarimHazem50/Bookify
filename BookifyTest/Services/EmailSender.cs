@@ -38,6 +38,7 @@ namespace BookifyTest.Services
             try
             {
                 await smtpClient.SendMailAsync(message);
+                Console.WriteLine("Send mail successfully");
             }
             catch (Exception ex)
             {

@@ -118,7 +118,7 @@
     <div class="card-footer pt-0">
         <div class="modal-footer px-5 pt-3 justify-content-center">
             <a asp-action="Index" class="btn btn-default py-2 px-3 ml-0" style="margin-left:-80px; margin-right: 10px;">Close</a>
-            <button class="btn btn-primary py-2 px-3 js-indicator" type="submit" form="Form">
+            <button class="btn btn-primary py-2 px-3 js-indicator" type="submit" form="Form" onclick="window.history.replaceState({}, '', '@Url.Action("Index", "Subscribers")');">
                 <spna class="input-btn-form-submit">Save</spna>
                 <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
             </button>
