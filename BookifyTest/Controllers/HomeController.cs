@@ -1,4 +1,11 @@
-﻿using System.Diagnostics;
+﻿using BookifyTest.Services;
+using BookifyTest.Tasks;
+using Hangfire;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using WhatsAppCloudApi.Services;
 
 namespace BookifyTest.Controllers
 {
@@ -6,17 +13,14 @@ namespace BookifyTest.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
         public HomeController(ILogger<HomeController> logger)
         {
-            _logger = logger;
+            _logger = logger;     
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult Privacy()
         {
             return View();
