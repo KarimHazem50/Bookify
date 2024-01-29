@@ -114,12 +114,11 @@ function showSuccessMessage() {
         text: 'saved successfully',
     })
 }
-function showErrorMessage(message) {
-    var textMessage = 'Something went wrong!';
+function showErrorMessage(message = 'Something went wrong!') {
     Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: (message.responseText == "" || message.responseText == undefined) ? textMessage : message.responseText
+        text: message.responseText !== undefined ? message.responseText : message,
     })
 }
 /* End SweetAlert*/

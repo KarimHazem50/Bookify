@@ -255,7 +255,9 @@ namespace BookifyTest.Controllers
         {
             var subscriberId = int.Parse(_dataProtector.Unprotect(id));
 
-            var subsriber = _context.Subscribers.Include(s => s.Area).Include(s => s.Governorate).Include(s => s.Subscriptions).SingleOrDefault(s => s.Id == subscriberId);
+            var subsriber = _context.Subscribers
+                                        .Include(s => s.Area).Include(s => s.Governorate).Include(s => s.Subscriptions).Include(s => s.Rentals).ThenInclude(r => r.RentalCopies)
+                                        .SingleOrDefault(s => s.Id == subscriberId);
             if (subsriber is null)
                 return NotFound();
 

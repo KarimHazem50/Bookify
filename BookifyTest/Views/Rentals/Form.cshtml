@@ -1,0 +1,51 @@
+﻿@model RentalFormViewModel
+
+@{
+    ViewData["Title"] = $"{(Model.CurrentCopies.Any() ? "Edit" : "Add")} Rental";
+}
+
+
+<!-- /.card -->
+<div class="card">
+    <div class="card-header d-flex justify-content-center align-items-center py-4">
+        <div class="d-flex align-items-center" style="gap: 10px;">
+            <i class="fa-solid fa-plus fa-lg"></i>
+            <span class="h2 mb-0">@(Model.CurrentCopies.Any() ? "Edit" : "Add") Rental</span>
+            <i class="fa-solid fa-plus fa-lg"></i>
+        </div>
+    </div>
+    <div class="card-body" style="padding: 50px">
+        <partial name="_SearchForm" model="new SearchFormViewModel()" />
+    </div>
+</div>
+<!-- /.card -->
+
+<div class="card mt-4 mb-0">
+    <div class="card-header d-flex justify-content-center align-items-center py-3">
+        <div class="d-flex align-items-center flex-column">
+            <span class="h3 mb-0">Books</span>
+            <p class="mb-0" style="font-size: 14px; opacity: 0.5;">You can add up to @(Model.MaxAllowedCopies) Book(s)</p>
+        </div>
+    </div>
+    <div class="card-body">
+        <form asp-controller="Rentals" id="CopiesContiner" style="padding: 0 50px; max-height: 39vh; overflow: auto;">
+            <input type="hidden" asp-for="SubscriberKey" />
+            @foreach (var copy in Model.CurrentCopies)
+            {
+                <partial name="_CopyDetails" model="copy" />
+            }
+        </form>
+        <div class="d-none justify-content-center" id="SubmitMasterDetailsForm">
+            <button type="submit" class="btn btn-lg btn-primary js-indicator-submit-main-form" form="CopiesContiner">
+                <span class="input-btn-form-submit">Save</span>
+                <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>var maxAllowedCopies = @(Model.MaxAllowedCopies)</script>
+    <script src="~/js/rental-form.js" asp-append-version="true"></script>
+}

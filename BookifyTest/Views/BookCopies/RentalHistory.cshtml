@@ -1,0 +1,107 @@
+﻿@model IEnumerable<CopyHistoryViewModel>
+
+@{
+    ViewData["Title"] = "Rental History";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center py-4">
+        <div class="d-flex align-items-center">
+            <div class="symbol symbol-40px me-4">
+                <div class="symbol-label fs-2 fw-semibold text-success">
+                    <!--begin::Svg Icon | path: icons/duotune/general/gen002.svg-->
+                    <span class="svg-icon svg-icon-2 svg-icon-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-nested" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+            </div>
+            <span class="h4 ml-2 mb-0">Rental History</span>
+        </div>
+    </div>
+</div>
+
+
+@if (!Model.Any())
+{
+    <!--begin::Alert-->
+    <div id="AlertNotRentals" class="d-flex alert alert-info align-items-center justify-content-center mt-4 py-3" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        </svg>
+        <div class="ml-3">
+            <h5 class="mb-0">No rental history for this copy.</h5>
+        </div>
+    </div>
+    <!--end::Alert-->
+}
+else
+{
+    <div class="card mt-3">
+        <div class="card-body">
+            <div class="table-responsive">
+                <!--begin::Table-->
+                <table class="table table-bordered text-center align-middle" style="line-height: 2">
+                    <!--begin::Table head-->
+                    <thead>
+                        <tr class="fw-bold text-muted bg-light">
+                            <th class="align-middle">Subscriber</th>
+                            <th class="align-middle">Subscriber Mobile</th>
+                            <th class="align-middle">Start Date</th>
+                            <th class="align-middle">End Date</th>
+                            <th class="align-middle">Total Delay (Days)</th>
+                            <th class="align-middle">Return Date</th>
+                            <th class="align-middle">Extend Date</th>
+                        </tr>
+                    </thead>
+                    <!--end::Table head-->
+                    <!--begin::Table body-->
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="align-middle">
+                                    <span class="fw-bold">@item.SubscriberName</span>
+                                </td>
+
+                                <td class="align-middle">
+                                    @item.SubscriberMobile
+                                </td>
+
+                                <td class="align-middle">
+                                    @item.RentalDate.ToString("d MMM, yyyy")
+                                </td>
+
+                                <td class="align-middle">
+                                    @item.EndDate.ToString("d MMM, yyyy")
+                                </td>
+
+                                <td class="align-middle @(item.DelayInDays > 0 ? "text-danger" : string.Empty)">
+                                    @item.DelayInDays Day(s)
+                                </td>
+
+                                <td class="align-middle">
+                                    @item.ReturnDate?.ToString("d MMM, yyyy")
+                                </td>
+
+                                <td class="align-middle text-end pe-4">
+                                    @item.ExtendedOn?.ToString("d MMM, yyyy")
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                    <!--end::Table body-->
+                </table>
+                <!--end::Table-->
+           </div>
+        </div>
+    </div>
+
+
+
+
+
+ 
+}

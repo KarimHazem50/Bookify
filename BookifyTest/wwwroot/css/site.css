@@ -16,6 +16,12 @@ html {
 body {
     margin-bottom: 60px;
 }
+.text-line-through {
+    text-decoration: line-through;
+}
+.opacity-50 {
+    opacity: 50%; /* Set the desired opacity value (0 to 1) */
+}
 /*Handle List of mode*/
 .handle-menu {
     padding: 15px 10px;

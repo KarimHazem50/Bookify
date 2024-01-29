@@ -117,6 +117,7 @@ var options = new RecurringJobOptions
     TimeZone = TimeZoneInfo.Local
 };
 RecurringJob.AddOrUpdate("Id", () => hangfireTasks.PrepareExpirationAlert(), "00 14 * * *", options);
+RecurringJob.AddOrUpdate("RentalId", () => hangfireTasks.RentalExpirationAlert(), "00 14 * * *", options);
 
 
 app.MapControllerRoute(

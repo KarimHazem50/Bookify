@@ -1,0 +1,141 @@
+﻿@model RentalReturnFormViewModel
+@{
+    ViewData["Title"] = "RentalReturn";
+}
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center py-4">
+        <div class="d-flex align-items-center">
+            <div class="symbol symbol-40px me-4">
+                <div class="symbol-label fs-2 fw-semibold text-success">
+                    <!--begin::Svg Icon | path: icons/duotune/general/gen002.svg-->
+                    <span class="svg-icon svg-icon-2 svg-icon-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-list-nested" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M4.5 11.5A.5.5 0 0 1 5 11h10a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 3 7h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m-2-4A.5.5 0 0 1 1 3h10a.5.5 0 0 1 0 1H1a.5.5 0 0 1-.5-.5" />
+                        </svg>
+                    </span>
+                    <!--end::Svg Icon-->
+                </div>
+            </div>
+            <span class="h4 ml-2 mb-0">Books</span>
+        </div>
+    </div>
+</div>
+
+@if (Model.Copies.All(c => c.ReturnDate.HasValue))
+{
+    <!--begin::Alert-->
+    <div id="AlertNotRentals" class="d-flex alert alert-info align-items-center justify-content-center mt-4 py-3" role="alert">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        </svg>
+        <div class="ml-3">
+            <h5 class="mb-0">All copis have been returned.</h5>
+        </div>
+    </div>
+    <!--end::Alert-->
+}
+else
+{
+
+    <form asp-controller="Rentals">
+        <div class="card mt-3">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered text-center align-middle" style="line-height: 2">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Total Delay (Days)</th>
+                                <th>Return Date</th>
+                                <th>Extend Date</th>
+                                <th>Return</th>
+                                <th>Extend</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.Copies.Count; i++)
+                            {
+                                var rental = Model.Copies[i];
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center sorting_1 ml-2">
+                                            <div class="mb-2 mr-3">
+                                                <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                                                    <a class="d-block overlay" data-fslightbox href="~/Images/books/@rental.BookCopy!.ImageName" style="background-image:url('/Images/books/Thumb/@rental.BookCopy!.ImageName'); width: 65px; height:100px; background-position:center; background-size:cover; background-repeat: no-repeat;">
+                                                        <div class="custom-lightBox-image">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z" />
+                                                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z" />
+                                                            </svg>
+                                                        </div>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex flex-column">
+                                                <h5 class="mb-1">@rental.BookCopy.BookTitle</h5>
+                                                <span class="text-secondary text-left">Edition# @rental.BookCopy.EditionNumber</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle">
+                                        @rental.RentalDate.ToString("dd MMM, yyyy")
+                                    </td>
+                                    <td class="align-middle">
+                                        @rental.EndDate.ToString("dd MMM, yyyy")
+                                    </td>
+                                    <td class="align-middle @(rental.DelayInDays > 0 ? "text-danger" : string.Empty)">
+                                        @rental.DelayInDays Day(s)
+                                    </td>
+                                    <td class="align-middle">
+                                        @rental.ReturnDate?.ToString("dd MMM, yyyy")
+                                    </td>
+                                    <td class="align-middle">
+                                        @rental.ExtendedOn?.ToString("dd MMM, yyyy")
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" asp-for="@Model.SelectedCopies[i].IsReturned" value="true" id="@($"{Model.SelectedCopies[i].Id}_Return")" style="width: 30px; height: 30px; cursor: pointer;">
+                                            <input type="hidden" asp-for="@Model.SelectedCopies[i].Id" id="@($"{Model.SelectedCopies[i].Id}_ID")" />
+                                            <label class="form-check-label" for="@($"{Model.SelectedCopies[i].Id}_Return")"></label>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-end pe-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" asp-for="@Model.SelectedCopies[i].IsReturned" value="false" id="@($"{Model.SelectedCopies[i].Id}_Extend")" disabled="@(Model.AllowExtend ? null : "disabled")" style="width: 30px; height: 30px; cursor: pointer;">
+                                            <label class="form-check-label" for="@($"{Model.SelectedCopies[i].Id}_Extend")"></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Model.TotalDelayInDays > 0)
+                {
+                    <div class="form-check ml-3 mt-3">
+                        <input type="hidden" asp-for="TotalDelayInDays" />
+                        <input class="form-check-input" type="checkbox" asp-for="PenaltyPaid">
+                        <label class="form-check-label" asp-for="PenaltyPaid"></label>
+                    </div>
+                }
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-lg btn-primary js-indicator-submit-main-form">
+                        <span class="input-btn-form-submit">Save</span>
+                        <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+
+@section Plugins {
+    <script src="~/lib/fslightbox/index.min.js"></script>
+}
+    @section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
