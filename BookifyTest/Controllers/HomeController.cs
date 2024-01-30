@@ -1,15 +1,7 @@
-﻿using BookifyTest.Services;
-using BookifyTest.Tasks;
-using Hangfire;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
-using WhatsAppCloudApi.Services;
+﻿using System.Diagnostics;
 
 namespace BookifyTest.Controllers
 {
-    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
@@ -20,12 +12,7 @@ namespace BookifyTest.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
+        }     
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

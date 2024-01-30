@@ -60,6 +60,14 @@
       "files": [
         "countUp.umd.min.js"
       ]
+    },
+    {
+      "library": "apexcharts@3.45.2",
+      "destination": "wwwroot/lib/apexcharts/",
+      "files": [
+        "apexcharts.min.js",
+        "apexcharts.min.css"
+      ]
     }
   ]
 }

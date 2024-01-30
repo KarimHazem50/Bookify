@@ -20,8 +20,31 @@ body {
     text-decoration: line-through;
 }
 .opacity-50 {
-    opacity: 50%; /* Set the desired opacity value (0 to 1) */
+    opacity: 50%; 
 }
+.glass {
+    /* From https://css.glass */
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 16px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+.custom-header {
+    font-family: 'Satisfy', cursive;
+}
+.custom-height {
+    height: auto;
+}
+
+
+@media (max-width: 768px) {
+    .custom-height {
+        height: 200px; 
+    }
+}
+
 /*Handle List of mode*/
 .handle-menu {
     padding: 15px 10px;
