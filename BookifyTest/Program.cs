@@ -5,6 +5,7 @@ using BookifyTest.Settings;
 using BookifyTest.Tasks;
 using Hangfire;
 using Hangfire.Dashboard;
+using HashidsNet;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -36,6 +37,8 @@ builder.Services.Configure<IdentityOptions>(options =>
 });
 
 builder.Services.AddDataProtection().SetApplicationName(nameof(BookifyTest));
+
+builder.Services.AddSingleton<IHashids>(_ => new Hashids(minHashLength: 5));
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
 
