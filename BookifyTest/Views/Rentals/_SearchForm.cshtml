@@ -1,0 +1,21 @@
+﻿@model SearchFormViewModel
+
+<form asp-action="GetCopyDetails" data-ajax="true" data-ajax-method="post" data-ajax-success="onAddCopySuccess" data-ajax-failure="showErrorMessage" data-ajax-complete="allowSubmitButtonForm">
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 offset-md-2">
+                    <div class="input-group">
+                        <input type="search" id="Search" class="form-control form-control-lg" placeholder="Search by serial number ..." autocomplete="off" asp-for="@Model.Value">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-lg btn-default js-indicator js-SubmitSearch">
+                                <span class="input-btn-form-submit"><i class="fa fa-search"></i></span>
+                                <span class="spinner-border-sm js-indicator-spinner" role="status" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>

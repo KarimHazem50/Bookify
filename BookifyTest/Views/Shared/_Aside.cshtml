@@ -1,4 +1,5 @@
 ﻿@inject IWebHostEnvironment webHostEnvironment
+@inject SignInManager<ApplicationUser> SignInManager
 @{
     var avatarUrl = $"{webHostEnvironment.WebRootPath}/Images/users/{User.FindFirst(ClaimTypes.NameIdentifier)!.Value}.png";
 
@@ -7,7 +8,7 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
-    <a asp-controller="Home" asp-action="Index" class="brand-link">
+    <a asp-controller="@(SignInManager.IsSignedIn(User) ? "Dashboard" : "Home")" asp-action="Index" class="brand-link">
         <img src="~/assets/images/Logo_sm.png" alt="Bookify Logo" class="brand-image img-circle elevation-3 ml-0" style="opacity: .8; margin-right: 0; width: 60px;">
         <span class="brand-text font-weight-light pl-2">Bookify</span>
     </a>
@@ -34,10 +35,10 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                 <li class="nav-item">
-                    <a asp-controller="Home" asp-action="Index" class="nav-link" active-when="Home">
-                        <i class="fa-solid fa-house px-1"></i>
+                    <a asp-controller="Dashboard" asp-action="Index" class="nav-link" active-when="Dashboard">
+                        <i class="fa-solid fa-chart-line px-1"></i>
                         <p>
-                            Home
+                            Dashboard
                         </p>
                     </a>
                 </li>
@@ -96,6 +97,19 @@
                         </a>
                     </li>
                 }
+                <li class="nav-item">
+                    <a asp-controller="Search" asp-action="Index" class="nav-link" active-when="Search">
+                        <span class="px-1">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor"></rect>
+								<path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor"></path>
+							</svg>
+						</span>
+                        <p>
+                            Search
+                        </p>
+                    </a>
+                </li>
             </ul>
         </nav>
         <!-- /.sidebar-menu -->

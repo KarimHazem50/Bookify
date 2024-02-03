@@ -96,5 +96,12 @@
             var viewModel = _mapper.Map<BookCopyViewModel>(copy);
             return PartialView("_BookCopyRow", viewModel);
         }
+        public IActionResult RentalHistory(int copyId)
+        {
+            var copyHistory = _context.RentalCopies.Include(c => c.Rental).ThenInclude(r => r!.Subscriber).Where(c => c.BookCopyId == copyId).OrderByDescending(c => c.RentalDate).ToList();
+
+            var viewModel = _mapper.Map<IEnumerable<CopyHistoryViewModel>>(copyHistory);
+            return View(viewModel);
+        }
     }
 }

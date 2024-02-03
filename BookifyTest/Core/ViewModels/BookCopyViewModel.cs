@@ -4,6 +4,7 @@
     {
         public int Id { get; set; }
         public int BookId { get; set; }
+        public string? ImageName { get; set; }
         public string BookTitle { get; set; } = null!;
         public bool IsAvailableForRental { get; set; }
         public bool IsAvailableForRentalForMainBook { get; set; }

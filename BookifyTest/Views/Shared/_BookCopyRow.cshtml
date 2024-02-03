@@ -18,6 +18,9 @@
     </td>
     <td>@Model.CreatedOn.ToString("dd MMM yyyy hh:mm tt")</td>
     <td>
+        <a asp-controller="BookCopies" asp-action="RentalHistory" asp-route-copyId="@Model.Id" class="btn btn-outline-info">History</a>
+    </td>   
+    <td>
         <div class="btn-group dropleft">
             <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-grid-fill" viewBox="0 0 16 16">

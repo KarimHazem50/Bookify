@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.DataProtection;
+﻿using Hangfire;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WhatsAppCloudApi;
+using WhatsAppCloudApi.Services;
 
 namespace BookifyTest.Controllers
 {
@@ -9,17 +12,21 @@ namespace BookifyTest.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IImageService _imageService;
         private readonly IEmailBodyBuilder _emailBodyBuilder;
         private readonly IEmailSender _emailSender;
+        private readonly IWhatsAppClient _whatsAppClient;
         private readonly IDataProtector _dataProtector;
-        public SubscribersController(ApplicationDbContext context, IMapper mapper, IImageService imageService, IEmailBodyBuilder emailBodyBuilder, IEmailSender emailSender, IDataProtectionProvider dataProtector)
+        public SubscribersController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment, IMapper mapper, IImageService imageService, IEmailBodyBuilder emailBodyBuilder, IEmailSender emailSender, IWhatsAppClient whatsAppClient, IDataProtectionProvider dataProtector)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
             _mapper = mapper;
             _imageService = imageService;
             _emailBodyBuilder = emailBodyBuilder;
             _emailSender = emailSender;
+            _whatsAppClient = whatsAppClient;
             _dataProtector = dataProtector.CreateProtector("MySecureKey");
         }
         private SubscriberFormViewModel PopulateData(SubscriberFormViewModel? model = null)
@@ -109,7 +116,7 @@ namespace BookifyTest.Controllers
             _context.Subscribers.Add(subscriber);
             _context.SaveChanges();
 
-
+            // Send Mail Message
             var placehoders = new Dictionary<string, string>()
             {
                 {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
@@ -117,7 +124,28 @@ namespace BookifyTest.Controllers
                 {"body", "thanks for joining Bookify 😍"},
             };
             var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Notification, placehoders: placehoders);
-            await _emailSender.SendEmailAsync(subscriber.Email, "Welcome to Bookify", body);
+            BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(subscriber.Email, "Welcome to Bookify", body));
+
+
+            // Send WhatsApp Message
+            if (subscriber.HasWhatsApp)
+            {
+                var components = new List<WhatsAppComponent>()
+                    {
+                        new WhatsAppComponent
+                        {
+                            Type = "body",
+                            Parameters = new List<object>()
+                            {
+                                new WhatsAppTextParameter
+                                {
+                                    Text = subscriber.FirstName
+                                }
+                            }
+                        }
+                    };
+                BackgroundJob.Enqueue(() => _whatsAppClient.SendMessage(_webHostEnvironment.IsDevelopment() ? "201027453613" : $"2{subscriber.MobileNumber}", WhatsAppLanguageCode.English_US, WhatsAppTemplates.WelcomeMessage, components));
+            }
 
 
             var subscriberId = _dataProtector.Protect(subscriber.Id.ToString());
@@ -227,7 +255,9 @@ namespace BookifyTest.Controllers
         {
             var subscriberId = int.Parse(_dataProtector.Unprotect(id));
 
-            var subsriber = _context.Subscribers.Include(s => s.Area).Include(s => s.Governorate).Include(s => s.Subscriptions).SingleOrDefault(s => s.Id == subscriberId);
+            var subsriber = _context.Subscribers
+                                        .Include(s => s.Area).Include(s => s.Governorate).Include(s => s.Subscriptions).Include(s => s.Rentals).ThenInclude(r => r.RentalCopies)
+                                        .SingleOrDefault(s => s.Id == subscriberId);
             if (subsriber is null)
                 return NotFound();
 
@@ -238,7 +268,7 @@ namespace BookifyTest.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RenewSubscriptionAsync(string sKey)
+        public IActionResult RenewSubscriptionAsync(string sKey)
         {
             var id = int.Parse(_dataProtector.Unprotect(sKey));
             var subscriber = _context.Subscribers.Include(s => s.Subscriptions).SingleOrDefault(s => s.Id == id);
@@ -262,15 +292,41 @@ namespace BookifyTest.Controllers
 
             _context.SaveChanges();
 
-
+            // Send Mail Messaga
             var placehoders = new Dictionary<string, string>()
             {
                 {"imageUrl", "https://previews.123rf.com/images/johan2011/johan20111309/johan2011130900008/21934214-ok-the-dude-giving-thumb-up-next-to-a-green-check-mark.jpg"},
                 {"header", $"Hello {subscriber.FirstName}"},
-                {"body", $"Your subscription has been renewed {subscriber.Subscriptions.Last().EndDate.ToString("d MMM yyyy")} 😍"},
+                {"body", $"Your subscription has been renewed {newSubscription.EndDate.ToString("d MMM yyyy")} 🥳🥳"},
             };
             var body = _emailBodyBuilder.GetEmailBody(template: EmailTemplates.Notification, placehoders: placehoders);
-            await _emailSender.SendEmailAsync(subscriber.Email, "Welcome to Bookify", body);
+            BackgroundJob.Enqueue(() => _emailSender.SendEmailAsync(subscriber.Email, "Bookify Subscription Renewal", body));
+
+
+            // Send WhatsApp Message
+            if (subscriber.HasWhatsApp)
+            {
+                var components = new List<WhatsAppComponent>()
+                    {
+                        new WhatsAppComponent
+                        {
+                            Type = "body",
+                            Parameters = new List<object>()
+                            {
+                                new WhatsAppTextParameter
+                                {
+                                    Text = subscriber.FirstName
+                                },
+                                 new WhatsAppTextParameter
+                                {
+                                    Text = newSubscription.EndDate.ToString("d MMM yyyy")
+                                },
+                            }
+                        }
+                    };
+                BackgroundJob.Enqueue(() => _whatsAppClient.SendMessage(_webHostEnvironment.IsDevelopment() ? "201027453613" : $"2{subscriber.MobileNumber}", WhatsAppLanguageCode.English_US, WhatsAppTemplates.SubscriptionRenew, components));
+            }
+
 
             var viewModel = _mapper.Map<SubscriptionViewModel>(newSubscription);
             return PartialView("_SubscriptionRow", viewModel);

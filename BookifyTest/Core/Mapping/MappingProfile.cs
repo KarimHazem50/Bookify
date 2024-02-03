@@ -28,7 +28,8 @@ namespace BookifyTest.Core.Mapping
 
             CreateMap<BookCopy, BookCopyViewModel>()
                 .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book!.Title))
-                .ForMember(dest => dest.IsAvailableForRentalForMainBook, opt => opt.MapFrom(src => src.Book!.IsAvailableForRental));
+                .ForMember(dest => dest.IsAvailableForRentalForMainBook, opt => opt.MapFrom(src => src.Book!.IsAvailableForRental))
+                .ForMember(dest => dest.ImageName, opt => opt.MapFrom(src => src.Book!.ImageName));
 
             CreateMap<BookCopy, BookCopyFormViewModel>()
                 .ForMember(dest => dest.ShowRentalInput, opt => opt.MapFrom(src => src.Book!.IsAvailableForRental));
@@ -57,6 +58,13 @@ namespace BookifyTest.Core.Mapping
 
             // Subscription
             CreateMap<Subscription, SubscriptionViewModel>();
+
+            // Rentals
+            CreateMap<RentalCopy, RentalCopyViewModel>();
+            CreateMap<Rental, RentalViewModel>();
+            CreateMap<RentalCopy, CopyHistoryViewModel>()
+               .ForMember(dest => dest.SubscriberMobile, opt => opt.MapFrom(src => src.Rental!.Subscriber!.MobileNumber))
+               .ForMember(dest => dest.SubscriberName, opt => opt.MapFrom(src => $"{src.Rental!.Subscriber!.FirstName} {src.Rental!.Subscriber!.LastName}"));
         }
     }
 }

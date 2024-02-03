@@ -1,0 +1,43 @@
+﻿@inject SignInManager<ApplicationUser> SignInManager
+@{
+    ViewData["Title"] = "Find a book";
+}
+@section CustomCss {
+	<link href="~/css/typeahead.css" rel="stylesheet" />
+}
+	<div class="app-container container-fluid" style="@(SignInManager.IsSignedIn(User) ? string.Empty : "background-color: #d2dee0; height: 100vh;")">
+	@if(!SignInManager.IsSignedIn(User)) {
+		<ul class="breadcrumb mb-4" style="background-color: #d2dee0; position: relative; top: 25px; font-weight: bold;">
+			<li class="breadcrumb-item"><a href="/">Home</a></li>
+			<li class="breadcrumb-item" style="color: gray">Find a book</li>
+		</ul>
+	}
+	<div class="card mb-3">
+		<div class="card-body d-flex" style="padding: 40px 20px 10px 150px">
+			<div class="d-flex align-items-center p-5" style="width: 40%;">
+				<div class="d-flex flex-column align-items-start justift-content-center mr-5 w-100">
+					<h3 class="mb-2" style="font-weight: bold;">Find a book</h3>
+					<div class="d-flex align-items-center position-relative w-100">
+						<span class="svg-icon position-absolute text-primary ml-2" style="z-index: 3">
+							<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<rect opacity="0.5" x="17.0365" y="15.1223" width="8.15546" height="2" rx="1" transform="rotate(45 17.0365 15.1223)" fill="currentColor"></rect>
+								<path d="M11 19C6.55556 19 3 15.4444 3 11C3 6.55556 6.55556 3 11 3C15.4444 3 19 6.55556 19 11C19 15.4444 15.4444 19 11 19ZM11 5C7.53333 5 5 7.53333 5 11C5 14.4667 7.53333 17 11 17C14.4667 17 17 14.4667 17 11C17 7.53333 14.4667 5 11 5Z" fill="currentColor"></path>
+							</svg>
+						</span>
+						<input type="text" class="form-control py-4" id="Search" placeholder="Search by book title or author name" style="padding: 5px 40px;">
+					</div>
+				</div>
+			</div>
+			<div class="d-flex justify-content-center align-items-end ml-2" style="width: 60%">
+				<img src="~/assets/images/search-dark.png" alt="" class="transform-x" style="max-width:300px;">
+			</div>
+		</div>
+	</div>
+</div>
+@section Plugins{
+    <script src="~/lib/typeahead.js/typeahead.bundle.min.js"></script>
+	<script src="~/lib/handlebars.js/handlebars.min.js"></script>
+}
+@section Scripts{
+    <script src="~/js/search.js" asp-append-version="true"></script>
+}
