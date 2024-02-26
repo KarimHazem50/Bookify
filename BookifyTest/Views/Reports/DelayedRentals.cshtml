@@ -1,0 +1,77 @@
+﻿@model DelayedRentalsReportViewModel
+@{
+    ViewData["Title"] = "Delayed Rentals Reports";
+}
+<form id="Form" class="d-none" asp-controller="Reports" method="get">
+    <input type="hidden" id="PageNumber" name="PageNumber" value="1" />
+</form>
+
+<div class="card">
+    <div class="card-header">
+        <div class="card-title d-flex align-items-center justify-content-between w-100">
+            <div>Delayed Rentals</div>
+            @if (Model.DelayedRentals.Any())
+            {
+                <div class="card-toolbar gap-3">
+                    <a class="btn btn-success" asp-action="ExportDelayedRentalsToExcel" asp-route-authors="@Context.Request.Query["SelectedAuthors"]" asp-route-categories="@Context.Request.Query["SelectedCategories"]">
+                        <i class="bi bi-file-earmark-excel-fill"></i>
+                        Export to Excel
+                    </a>
+                    <a class="btn btn-danger" asp-action="ExportDelayedRentalsToPdf" asp-route-authors="@Context.Request.Query["SelectedAuthors"]" asp-route-categories="@Context.Request.Query["SelectedCategories"]">
+                        <i class="bi bi-filetype-pdf"></i>
+                        Export to PDF
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="card-body">
+        @if (Model.DelayedRentals.Any())
+        {
+            <partial name="_Pagination" model="new PaginationViewModel {PageNumber = Model.DelayedRentals.PageNumber, TotalPages = Model.DelayedRentals.TotalPages}" />
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" style="width: 100%">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center">Subscriber ID</th>
+                            <th class="text-center">Subscriber Name</th>
+                            <th class="text-center">Subscriber Phone</th>
+                            <th class="text-center">Book Title</th>
+                            <th class="text-center">Book Author</th>
+                            <th class="text-center">Book Serial</th>
+                            <th class="text-center">Rental Date</th>
+                            <th class="text-center">End Date</th>
+                            <th class="text-center">Extended On</th>
+                            <th class="text-center">Delay In Days</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var rental in Model.DelayedRentals)
+                        {
+                            <tr>
+                                <td>@rental.Rental!.SubScriberId</td>
+                                <td>@($"{rental.Rental.Subscriber!.FirstName} {rental.Rental.Subscriber.LastName}")</td>
+                                <td>@rental.Rental.Subscriber.MobileNumber</td>
+                                <td>@rental.BookCopy!.Book!.Title</td>
+                                <td>@rental.BookCopy.Book.Authors!.Name</td>
+                                <td>@rental.BookCopy.SerialNumber</td>
+                                <td>@rental.RentalDate.ToString("dd MMM, yyyy")</td>
+                                <td>@rental.EndDate.ToString("dd MMM, yyyy")</td>
+                                <td>@rental.ExtendedOn?.ToString("dd MMM, yyyy")</td>
+                                <td>@((int)(DateTime.Today - rental.EndDate).TotalDays)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <h5>No delayed rentals were found</h5>
+        }
+    </div>
+</div>
+@section Scripts
+    {
+    <script src="~/js/reports.js" asp-append-version="true"></script>
+}

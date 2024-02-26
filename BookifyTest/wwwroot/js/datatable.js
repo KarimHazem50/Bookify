@@ -36,8 +36,16 @@ $(function () {
                     columns: exportedCols
                 },
                 customize: function (doc) {
-                    doc.content[1].table.widths =
-                        Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    doc.content[1].table.widths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                    pdfMake.fonts = {
+                        Times : {
+                            normal: "Times.ttf",
+                            bold: "Times.ttf",
+                            italics: "Times.ttf",
+                            bolditalics: "Times.ttf",
+                        }
+                    }
+                    doc.defaultStyle.font = "Times";
                 },
             },
             {

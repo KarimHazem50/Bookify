@@ -10,5 +10,6 @@
         public const string DenySpecialCharacters = "^[^<>!#%$]*$";
         public const string MobileNumber = "^01[0,1,2,5]{1}[0-9]{8}$";
         public const string NationalNumber = "^(2|3)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])\\d{3}\\d{4}$";
+        public const string Date = @"^(0?[1-9]|1[0-2])/(0?[1-9]|[12][0-9]|3[01])/\d{4} \d{1,2}:\d{2}:\d{2} (AM|PM)$";
     }
 }

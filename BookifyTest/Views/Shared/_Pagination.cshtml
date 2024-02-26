@@ -1,0 +1,47 @@
+﻿@model PaginationViewModel
+
+<nav aria-label="...">
+    <ul class="pagination flex-wrap">
+        <li class="page-item @(Model.HasPreviousPage ? string.Empty : "disabled")">
+            <a href="javaScript:;" class="page-link" data-index="@(Model.PageNumber - 1)">Previous</a>
+        </li>
+
+        <li class="page-item @(Model.PageNumber == 1 ? "active" : string.Empty)">
+            <a href="javaScript:;" class="page-link" data-index=1>1</a>
+        </li>
+
+        @if (Model.TotalPages > (int)ReportsConfigurations.MaxShowNumbersPages && Model.Start > 2)
+        {
+            <li class="page-item disabled">
+                <a href="javaScript:;" class="page-link">....</a>
+            </li>
+        }
+
+        @for (var i = Model.Start; i <= Model.End; i++)
+        {
+            if (i == 1 || i == Model.TotalPages)
+                continue;
+            <li class="page-item @(Model.PageNumber == i ? "active" : string.Empty)">
+                <a href="javaScript:;" class="page-link" data-index=@i>@i</a>
+            </li>
+        }
+
+        @if (Model.TotalPages > (int)ReportsConfigurations.MaxShowNumbersPages && Model.End < Model.TotalPages - 1)
+        {
+            <li class="page-item disabled">
+                <a href="javaScript:;" class="page-link">....</a>
+            </li>
+        }
+
+
+        @if(Model.TotalPages != 1) {
+            <li class="page-item @(Model.PageNumber == Model.TotalPages ? "active" : string.Empty)">
+                <a href="javaScript:;" class="page-link" data-index=@Model.TotalPages>@Model.TotalPages</a>
+            </li>
+        }
+
+        <li class="page-item @(Model.HasNextPage ? string.Empty : "disabled")">
+            <a href="javaScript:;" class="page-link" data-index="@(Model.PageNumber + 1)">Next</a>
+        </li>
+    </ul>
+</nav>
