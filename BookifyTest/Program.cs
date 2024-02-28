@@ -5,11 +5,15 @@ using BookifyTest.Settings;
 using BookifyTest.Tasks;
 using Hangfire;
 using Hangfire.Dashboard;
+using Hangfire.Logging;
 using HashidsNet;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
+using Serilog;
+using Serilog.Context;
 using System.Reflection;
 using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 using ViewToHTML.Extensions;
@@ -68,6 +72,10 @@ builder.Services.Configure<AuthorizationOptions>(options => options.AddPolicy("A
 
 builder.Services.AddViewToHTML();
 
+// Add Serilog
+Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
+builder.Host.UseSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -81,6 +89,8 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -124,6 +134,17 @@ var options = new RecurringJobOptions
 };
 RecurringJob.AddOrUpdate("Id", () => hangfireTasks.PrepareExpirationAlert(), "00 14 * * *", options);
 RecurringJob.AddOrUpdate("RentalId", () => hangfireTasks.RentalExpirationAlert(), "00 14 * * *", options);
+
+
+// Add Custom Columns to Serilog
+app.Use(async (context, next) =>
+{
+    LogContext.PushProperty("UserId", context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+    LogContext.PushProperty("UserName", context.User.FindFirst(ClaimTypes.Name)?.Value);
+
+    await next();
+});
+app.UseSerilogRequestLogging();
 
 
 app.MapControllerRoute(
