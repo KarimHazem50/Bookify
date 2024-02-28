@@ -7,18 +7,18 @@ namespace BookifyTest.Core.ViewModels
     {
         public string? Key { get; set; }
 
-        [MaxLength(30, ErrorMessage = Errors.MaxLength), Display(Name = "First Name"), 
+        [MaxLength(30, ErrorMessage = Errors.MaxLength), Display(Name = "First Name"),
             RegularExpression(RegexPatterns.DenySpecialCharacters, ErrorMessage = Errors.DenySpecialCharacters)]
         public string FirstName { get; set; } = null!;
 
-        [MaxLength(30, ErrorMessage = Errors.MaxLength), Display(Name = "Last Name"), 
+        [MaxLength(30, ErrorMessage = Errors.MaxLength), Display(Name = "Last Name"),
             RegularExpression(RegexPatterns.DenySpecialCharacters, ErrorMessage = Errors.DenySpecialCharacters)]
         public string LastName { get; set; } = null!;
 
         [Display(Name = "Date of Birth")]
         public DateTime DateOfBirth { get; set; }
 
-        [MaxLength(14, ErrorMessage = Errors.MaxLength), Display(Name = "National ID"), 
+        [MaxLength(14, ErrorMessage = Errors.MaxLength), Display(Name = "National ID"),
             RegularExpression(RegexPatterns.NationalNumber, ErrorMessage = Errors.InvalidNationalNumber)]
         [Remote("AllowedNationlID", "Subscribers", AdditionalFields = "Key", ErrorMessage = Errors.Duplicated)]
         public string NationalId { get; set; } = null!;
@@ -46,7 +46,7 @@ namespace BookifyTest.Core.ViewModels
         public int GovernorateId { get; set; }
         public IEnumerable<SelectListItem>? DisplayGovernorates { get; set; }
 
-        [MaxLength(500, ErrorMessage = Errors.MaxLength), 
+        [MaxLength(500, ErrorMessage = Errors.MaxLength),
             RegularExpression(RegexPatterns.DenySpecialCharacters, ErrorMessage = Errors.DenySpecialCharacters)]
         public string Address { get; set; } = null!;
     }

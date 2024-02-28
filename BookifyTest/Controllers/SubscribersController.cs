@@ -51,7 +51,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Search(SearchFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -80,7 +79,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SubscriberFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -101,7 +99,7 @@ namespace BookifyTest.Controllers
             model.ImageName = imageName;
 
             var subscriber = _mapper.Map<Subscriber>(model);
-            subscriber.CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            subscriber.CreatedById = User.GetUserId();
 
             Subscription subscription = new()
             {
@@ -209,7 +207,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(SubscriberFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -246,7 +243,7 @@ namespace BookifyTest.Controllers
 
             subscriber = _mapper.Map(model, subscriber);
             subscriber.LastUpdatedOn = DateTime.Now;
-            subscriber.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            subscriber.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Details), new { id = model.Key });
@@ -267,7 +264,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult RenewSubscriptionAsync(string sKey)
         {
             var id = int.Parse(_dataProtector.Unprotect(sKey));
@@ -282,7 +278,7 @@ namespace BookifyTest.Controllers
 
             Subscription newSubscription = new()
             {
-                CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value,
+                CreatedById = User.GetUserId(),
                 CreatedOn = DateTime.Now,
                 StartDate = startDate,
                 EndDate = startDate.AddYears(1)

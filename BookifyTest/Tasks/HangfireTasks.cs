@@ -1,6 +1,4 @@
-﻿using BookifyTest.Core.Models;
-using Microsoft.AspNetCore.Identity.UI.Services;
-using System;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using WhatsAppCloudApi;
 using WhatsAppCloudApi.Services;
 
@@ -74,7 +72,8 @@ namespace BookifyTest.Tasks
             var rentals = _context.Rentals
                                         .Include(r => r.RentalCopies).ThenInclude(rc => rc.BookCopy).ThenInclude(c => c!.Book)
                                         .Include(r => r.Subscriber)
-                                        .Where(r => r.RentalCopies.Any(rc => rc.EndDate == tomorrow)).ToList();
+                                        .Where(r => r.RentalCopies.Any(rc => rc.EndDate == tomorrow && !rc.ReturnDate.HasValue))
+                                        .ToList();
             foreach (var rental in rentals)
             {
                 var copiesWillBeExpired = rental.RentalCopies.Where(rc => rc.EndDate == tomorrow && !rc.ReturnDate.HasValue).Select(rc => rc.BookCopy!.Book!.Title).ToArray();

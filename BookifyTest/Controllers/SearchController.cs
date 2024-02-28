@@ -21,8 +21,8 @@ namespace BookifyTest.Controllers
         public IActionResult Find(string value)
         {
             var books = _context.Books.Include(b => b.Authors)
-                                                .Where(b => !b.IsDeleted &&  (b.Title.Contains(value) || b.Authors!.Name.Contains(value)))
-                                                .Select(b => new {b.Title, Author = b.Authors!.Name, key = _hashids.Encode(b.Id)})
+                                                .Where(b => !b.IsDeleted && (b.Title.Contains(value) || b.Authors!.Name.Contains(value)))
+                                                .Select(b => new { b.Title, Author = b.Authors!.Name, key = _hashids.Encode(b.Id) })
                                                 .ToList();
             return Ok(books);
         }

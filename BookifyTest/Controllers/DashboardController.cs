@@ -62,8 +62,8 @@
         [AjaxOnly]
         public IActionResult GetRentalsPerDay(DateTime? startDate, DateTime? endDate)
         {
-             startDate ??= DateTime.Today.AddDays(-29);
-             endDate ??= DateTime.Today;
+            startDate ??= DateTime.Today.AddDays(-29);
+            endDate ??= DateTime.Today;
 
             var data = _context.RentalCopies.Where(rc => rc.RentalDate >= startDate && rc.RentalDate <= endDate)
                                     .GroupBy(rc => new

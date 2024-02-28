@@ -1,5 +1,4 @@
 ﻿using BookifyTest.Core.Utilities;
-using BookifyTest.Extensions;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OpenHtmlToPdf;
@@ -29,7 +28,7 @@ namespace BookifyTest.Controllers
 
             _logoPath = $"{_webHostEnvironment.WebRootPath}/assets/images/logo.png";
         }
-        
+
 
         public IActionResult Index()
         {
@@ -300,7 +299,7 @@ namespace BookifyTest.Controllers
 
             var viewModel = new DelayedRentalsReportViewModel();
 
-            viewModel.DelayedRentals = PaginatedList<RentalCopy>.Create(delayedRentals, pageNumber??1, (int)ReportsConfigurations.PageSize);
+            viewModel.DelayedRentals = PaginatedList<RentalCopy>.Create(delayedRentals, pageNumber ?? 1, (int)ReportsConfigurations.PageSize);
 
             return View(viewModel);
         }

@@ -25,7 +25,6 @@
             return PartialView("Form", viewModel);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Create(BookCopyFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -39,7 +38,7 @@
             {
                 EditionNumber = model.EditionNumber,
                 IsAvailableForRental = book.IsAvailableForRental ? model.IsAvailableForRental : false,
-                CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+                CreatedById = User.GetUserId()
             };
             book.BookCopies.Add(copy);
             _context.SaveChanges();
@@ -60,7 +59,6 @@
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Edit(BookCopyFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -73,7 +71,7 @@
             copy.EditionNumber = model.EditionNumber;
             copy.IsAvailableForRental = copy.Book!.IsAvailableForRental ? model.IsAvailableForRental : false;
             copy.LastUpdatedOn = DateTime.Now;
-            copy.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            copy.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
 
             var viewModel = _mapper.Map<BookCopyViewModel>(copy);
@@ -81,7 +79,6 @@
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult ToggleStatus(int id)
         {
             var copy = _context.BookCopies.Include(c => c.Book).SingleOrDefault(c => c.Id == id);
@@ -90,7 +87,7 @@
 
             copy.IsDeleted = !copy.IsDeleted;
             copy.LastUpdatedOn = DateTime.Now;
-            copy.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            copy.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
 
             var viewModel = _mapper.Map<BookCopyViewModel>(copy);

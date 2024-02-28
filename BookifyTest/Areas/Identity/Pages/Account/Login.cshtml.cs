@@ -97,7 +97,7 @@ namespace BookifyTest.Areas.Identity.Pages.Account
                 }
                 if (result.IsNotAllowed)
                 {
-                    return RedirectToPage("./ResendEmailConfirmation", new {username = Input.Username});
+                    return RedirectToPage("./ResendEmailConfirmation", new { username = Input.Username });
                 }
                 else
                 {

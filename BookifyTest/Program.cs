@@ -1,76 +1,17 @@
-using BookifyTest.Core.Mapping;
-using BookifyTest.Helper;
 using BookifyTest.Seeds;
-using BookifyTest.Settings;
 using BookifyTest.Tasks;
 using Hangfire;
 using Hangfire.Dashboard;
-using Hangfire.Logging;
-using HashidsNet;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Logging;
 using Serilog;
 using Serilog.Context;
-using System.Reflection;
-using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
-using ViewToHTML.Extensions;
-using WhatsAppCloudApi.Extensions;
 using WhatsAppCloudApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString!));
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-    
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultUI()
-    .AddDefaultTokenProviders();
-
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequiredLength = 8;
-    options.User.RequireUniqueEmail = true;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
-});
-
-builder.Services.AddDataProtection().SetApplicationName(nameof(BookifyTest));
-
-builder.Services.AddSingleton<IHashids>(_ => new Hashids(minHashLength: 5));
-
-builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
-
-builder.Services.AddTransient<IImageService, ImageService>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
-
-builder.Services.AddControllersWithViews();
-
-builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MappingProfile)));
-builder.Services.AddExpressiveAnnotations();
-builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
-
-builder.Services.Configure<SecurityStampValidatorOptions>(options => options.ValidationInterval = TimeSpan.Zero);
-
-builder.Services.AddWhatsAppApiClient(builder.Configuration);
-
-builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
-builder.Services.AddHangfireServer();
-
-builder.Services.Configure<AuthorizationOptions>(options => options.AddPolicy("AdminsOnly", policy =>
-{
-    policy.RequireAuthenticatedUser();
-    policy.RequireRole(AppRoles.Admin);
-}));
-
-builder.Services.AddViewToHTML();
+builder.Services.AddBookifyServices(builder);
 
 // Add Serilog
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
@@ -95,6 +36,20 @@ app.UseStatusCodePagesWithReExecute("/Home/Error/{0}");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+// Secure All Cookies
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    Secure = CookieSecurePolicy.Always
+});
+
+// Deny IFrames
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Add("X-Frame-Options", "Deny");
+
+    await next();
+});
+
 app.UseRouting();
 
 app.UseAuthentication();
@@ -114,7 +69,7 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions()
 {
     DashboardTitle = "Bookify Dashboard",
     IsReadOnlyFunc = (DashboardContext context) => true,
-    Authorization = new IDashboardAuthorizationFilter[] 
+    Authorization = new IDashboardAuthorizationFilter[]
     {
         new HangfireAuthorizationFilter("AdminsOnly")
     }

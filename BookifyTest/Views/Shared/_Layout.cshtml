@@ -30,6 +30,14 @@
     <!--begin::Theme mode setup on page load-->
     <script>var defaultThemeMode = "light"; var themeMode; if (document.documentElement) { if (document.documentElement.classList.contains("dark-mode")) { themeMode = "dark-mode"; } else { if (localStorage.getItem("theme") !== null) { themeMode = "dark-mode"; } else { themeMode = defaultThemeMode; } } document.documentElement.classList.add(themeMode); }</script>
     <!--end::Theme mode setup on page load-->
+    <!--begin:: no script-->
+    <noscript>
+        <div class="position-fixed h-100 w-100 bg-white text-center pt-20" style="z-index: 30000000000;">
+            <h1 class="text-danger">Javascript is disabled</h1>
+            <p class="pt-3 text-muted">Please enable javascript and refresh the page</p>
+        </div>
+    </noscript>
+    <!--end:: no script-->
     <div class="wrapper">
         <!-- Preloader -->
         <div class="preloader flex-column justify-content-center align-items-center">

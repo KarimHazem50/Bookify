@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Net;
 
 namespace BookifyTest.Areas.Identity.Pages.Account.Manage
 {
@@ -95,7 +94,7 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
                 {
                     System.IO.File.Copy(sourceImagePath, destinationImagePath, true);
                 }
-                
+
 
                 _imageService.Delete($"{user.Id}.png", "/Images/users", HasThumbnailPath: false);
 
@@ -107,7 +106,7 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
                     {
                         System.IO.File.Copy(destinationImagePath, sourceImagePath, true);
                     }
-                       
+
                     ModelState.AddModelError("Input.Avatar", errorMessage!);
                     await LoadAsync(user);
                     return Page();

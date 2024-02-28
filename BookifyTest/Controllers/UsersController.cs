@@ -47,7 +47,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UserFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -58,7 +57,7 @@ namespace BookifyTest.Controllers
                 FullName = model.FullName,
                 UserName = model.UserName,
                 Email = model.Email,
-                CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value
+                CreatedById = User.GetUserId()
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -110,8 +109,8 @@ namespace BookifyTest.Controllers
 
             return Json(IsAllowed);
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleStatus(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -119,7 +118,7 @@ namespace BookifyTest.Controllers
                 return NotFound();
 
             user.IsDeleted = !user.IsDeleted;
-            user.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            user.LastUpdatedById = User.GetUserId();
             user.LastUpdatedOn = DateTime.Now;
             await _userManager.UpdateAsync(user);
 
@@ -140,8 +139,8 @@ namespace BookifyTest.Controllers
                 return NotFound();
             return PartialView("_FormResetPassword");
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(UserResetPasswordFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -156,7 +155,7 @@ namespace BookifyTest.Controllers
             if (result.Succeeded)
             {
                 user.LastUpdatedOn = DateTime.Now;
-                user.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+                user.LastUpdatedById = User.GetUserId();
                 await _userManager.UpdateAsync(user);
 
                 var viewModel = _mapper.Map<UsersViewModel>(user);
@@ -188,7 +187,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UserFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -202,7 +200,7 @@ namespace BookifyTest.Controllers
             user.UserName = model.UserName;
             user.Email = model.Email;
             user.LastUpdatedOn = DateTime.Now;
-            user.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            user.LastUpdatedById = User.GetUserId();
 
             var result = await _userManager.UpdateAsync(user);
 
@@ -231,7 +229,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnLock(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -243,7 +240,7 @@ namespace BookifyTest.Controllers
             {
                 await _userManager.SetLockoutEndDateAsync(user, null);
                 user.LastUpdatedOn = DateTime.Now;
-                user.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+                user.LastUpdatedById = User.GetUserId();
                 await _userManager.UpdateAsync(user);
             }
             var viewModel = _mapper.Map<UsersViewModel>(user);

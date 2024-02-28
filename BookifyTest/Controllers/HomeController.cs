@@ -1,6 +1,5 @@
 ﻿using HashidsNet;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Diagnostics;
 
 namespace BookifyTest.Controllers
 {
@@ -29,7 +28,7 @@ namespace BookifyTest.Controllers
                 bookViewModel.Key = _hashids.Encode(bookViewModel.Id);
             }
             return View(viewModel);
-        }     
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error(int id = 500)
         {

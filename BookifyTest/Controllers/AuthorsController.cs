@@ -24,13 +24,12 @@
             return PartialView("_Form");
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Create(AuthorFormViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
             var author = _mapper.Map<Author>(model);
-            author.CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            author.CreatedById = User.GetUserId();
             _context.Authors.Add(author);
             _context.SaveChanges();
 
@@ -47,7 +46,6 @@
             return PartialView("_Form", viewModel);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult Edit(AuthorFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -59,7 +57,7 @@
 
             _mapper.Map(model, author);
             author.LastUpdatedOn = DateTime.Now;
-            author.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            author.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
             var viewModel = _mapper.Map<AuthorViewModel>(author);
             return PartialView("_AuthorRow", viewModel);
@@ -71,7 +69,6 @@
             return Json(IsAllowed);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult ToggleStatus(int id)
         {
             var author = _context.Authors.Find(id);
@@ -80,7 +77,7 @@
 
             author.IsDeleted = !author.IsDeleted;
             author.LastUpdatedOn = DateTime.Now;
-            author.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            author.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
 
             var viewModel = _mapper.Map<AuthorViewModel>(author);

@@ -8,8 +8,8 @@ namespace BookifyTest.Core.ViewModels
         public DateTime EndDate { get; set; }
         public DateTime CreatedOn { get; set; }
 
-        public string Status 
-        { 
+        public string Status
+        {
             get
             {
                 return DateTime.Today > EndDate ? SubscriptionStatus.Expired : DateTime.Today < StartDate ? string.Empty : SubscriptionStatus.Active;

@@ -24,13 +24,13 @@ namespace BookifyTest.Services
                 return (isUploaded: false, errorMessage: Errors.Maxsize);
 
             var path = Path.Combine($"{_webHostEnvironment.WebRootPath}{folderPath}", imageName);
-           
+
             using var stream = File.Create(path);
             await image.CopyToAsync(stream);
             stream.Dispose();
 
-           if (hasThumbnail)
-           {
+            if (hasThumbnail)
+            {
                 var ThumbPath = Path.Combine($"{_webHostEnvironment.WebRootPath}{folderPath}/Thumb", imageName);
 
                 using var loadedImage = Image.Load(image.OpenReadStream());
@@ -38,7 +38,7 @@ namespace BookifyTest.Services
                 var height = loadedImage.Height / ratio;
                 loadedImage.Mutate(i => i.Resize(width: 175, height: (int)height));
                 loadedImage.Save(ThumbPath);
-           }
+            }
 
             return (isUploaded: true, errorMessage: null);
         }
@@ -48,13 +48,13 @@ namespace BookifyTest.Services
             if (File.Exists(oldPath))
                 File.Delete(oldPath);
 
-            if(HasThumbnailPath)
+            if (HasThumbnailPath)
             {
                 var oldThumbPath = Path.Combine($"{_webHostEnvironment.WebRootPath}{imagePath}/Thumb/{ImageName}");
 
                 if (File.Exists(oldThumbPath))
                     File.Delete(oldThumbPath);
-            }  
+            }
         }
 
     }

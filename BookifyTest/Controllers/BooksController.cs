@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Processing;
 using System.Linq.Dynamic.Core;
 
 namespace BookifyTest.Controllers
@@ -12,7 +11,7 @@ namespace BookifyTest.Controllers
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IImageService _imageService;
- 
+
         public BooksController(ApplicationDbContext context, IMapper mapper, IWebHostEnvironment webHostEnvironment, IImageService imageService)
         {
             _context = context;
@@ -38,7 +37,7 @@ namespace BookifyTest.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost, IgnoreAntiforgeryToken]
         public IActionResult GetBooks()
         {
             var start = int.Parse(Request.Form["start"]);
@@ -75,7 +74,6 @@ namespace BookifyTest.Controllers
             return View("Form", PopulateData());
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -103,7 +101,7 @@ namespace BookifyTest.Controllers
                     return View("Form", PopulateData(model));
                 }
             }
-            book.CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            book.CreatedById = User.GetUserId();
             _context.Books.Add(book);
             _context.SaveChanges();
 
@@ -121,7 +119,6 @@ namespace BookifyTest.Controllers
             return View("Form", viewModel);
         }
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(BookFormViewModel model)
         {
             if (!ModelState.IsValid)
@@ -139,7 +136,7 @@ namespace BookifyTest.Controllers
                 var result = await _imageService.UploadAsync(model.Image, imageName, "/Images/books", hasThumbnail: true);
 
                 if (result.isUploaded)
-                {              
+                {
                     if (!string.IsNullOrEmpty(book.ImageName))
                     {
                         _imageService.Delete(book.ImageName, "/Images/books", HasThumbnailPath: true);
@@ -161,7 +158,7 @@ namespace BookifyTest.Controllers
 
             book = _mapper.Map(model, book);
             book.LastUpdatedOn = DateTime.Now;
-            book.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            book.LastUpdatedById = User.GetUserId();
 
             book.Categories.Clear();
             foreach (var category in model.SelectedCategories)
@@ -188,7 +185,6 @@ namespace BookifyTest.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public IActionResult ToggleStatus(int id)
         {
             var book = _context.Books.Find(id);
@@ -196,7 +192,7 @@ namespace BookifyTest.Controllers
                 return NotFound();
             book.IsDeleted = !book.IsDeleted;
             book.LastUpdatedOn = DateTime.Now;
-            book.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            book.LastUpdatedById = User.GetUserId();
             _context.SaveChanges();
 
             var viewModel = _mapper.Map<BookViewModel>(book);
