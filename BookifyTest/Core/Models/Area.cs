@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Models
+﻿namespace Bookify.Web.Core.Models
 {
     [Index(nameof(Name), nameof(GovernorateId), IsUnique = true)]
     public class Area : BaseModule

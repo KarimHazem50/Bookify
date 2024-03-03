@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.DataProtection;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Reception)]
     public class RentalsController : Controller

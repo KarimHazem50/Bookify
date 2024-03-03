@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Models
+﻿namespace Bookify.Web.Core.Models
 {
     [Index(nameof(Email), IsUnique = true)]
     [Index(nameof(MobileNumber), IsUnique = true)]

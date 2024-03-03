@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Consts
+﻿namespace Bookify.Web.Core.Consts
 {
     public static class EmailTemplates
     {

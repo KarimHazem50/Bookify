@@ -2,7 +2,7 @@
 using SixLabors.ImageSharp;
 using System.Linq.Dynamic.Core;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Archive)]
     public class BooksController : Controller

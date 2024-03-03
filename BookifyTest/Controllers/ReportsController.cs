@@ -1,4 +1,4 @@
-﻿using BookifyTest.Core.Utilities;
+﻿using Bookify.Web.Core.Utilities;
 using ClosedXML.Excel;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using OpenHtmlToPdf;
@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 using System.Net.Mime;
 using ViewToHTML.Services;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Admin)]
     public class ReportsController : Controller

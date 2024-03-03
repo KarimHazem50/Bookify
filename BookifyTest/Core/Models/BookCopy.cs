@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Models
+﻿namespace Bookify.Web.Core.Models
 {
     public class BookCopy : BaseModule
     {

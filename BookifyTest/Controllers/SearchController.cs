@@ -1,6 +1,6 @@
 ﻿using HashidsNet;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     public class SearchController : Controller
     {

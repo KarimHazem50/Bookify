@@ -1,7 +1,7 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
-namespace BookifyTest.Services
+namespace Bookify.Web.Services
 {
     public class ImageService : IImageService
     {

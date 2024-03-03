@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BookifyTest.Core.Mapping
+namespace Bookify.Web.Core.Mapping
 {
     public class MappingProfile : Profile
     {

@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Enums
+﻿namespace Bookify.Web.Core.Enums
 {
     public enum ReportsConfigurations
     {

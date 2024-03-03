@@ -1,7 +1,7 @@
 ﻿using HashidsNet;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Controllers
+﻿namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Archive)]
     public class AuthorsController : Controller

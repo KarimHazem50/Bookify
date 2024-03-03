@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace BookifyTest.Data.Migrations
+namespace Bookify.Web.Data.Migrations
 {
     public partial class AddSubscribers_Areas_GovernoratesTables : Migration
     {

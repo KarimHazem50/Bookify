@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "BookifyTest": {
+    "Bookify.Web": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

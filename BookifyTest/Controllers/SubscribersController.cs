@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using WhatsAppCloudApi;
 using WhatsAppCloudApi.Services;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Reception)]
     public class SubscribersController : Controller

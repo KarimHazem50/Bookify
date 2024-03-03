@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace BookifyTest.Areas.Identity.Pages.Account.Manage
+namespace Bookify.Web.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
@@ -140,7 +140,7 @@ namespace BookifyTest.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("BookifyTest"),
+                _urlEncoder.Encode("Bookify"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

@@ -1,10 +1,10 @@
-﻿using BookifyTest.Settings;
+﻿using Bookify.Web.Settings;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 
-namespace BookifyTest.Services
+namespace Bookify.Web.Services
 {
     public class EmailSender : IEmailSender
     {

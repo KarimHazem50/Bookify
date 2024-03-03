@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Settings
+﻿namespace Bookify.Web.Settings
 {
     public class MailSettings
     {

@@ -1,6 +1,6 @@
-﻿using BookifyTest.Core.Mapping;
-using BookifyTest.Helper;
-using BookifyTest.Settings;
+﻿using Bookify.Web.Core.Mapping;
+using Bookify.Web.Helper;
+using Bookify.Web.Settings;
 using Hangfire;
 using HashidsNet;
 using Microsoft.AspNetCore.DataProtection;
@@ -11,7 +11,7 @@ using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 using ViewToHTML.Extensions;
 using WhatsAppCloudApi.Extensions;
 
-namespace BookifyTest.Extensions
+namespace Bookify.Web.Extensions
 {
     public static class DependancyInjection
     {
@@ -35,7 +35,7 @@ namespace BookifyTest.Extensions
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
             });
 
-            builder.Services.AddDataProtection().SetApplicationName(nameof(BookifyTest));
+            builder.Services.AddDataProtection().SetApplicationName(nameof(Bookify));
 
             builder.Services.AddSingleton<IHashids>(_ => new Hashids(minHashLength: 5));
 

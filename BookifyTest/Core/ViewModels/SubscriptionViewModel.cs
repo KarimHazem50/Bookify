@@ -1,6 +1,6 @@
 ﻿using Bookify.Web.Core.Consts;
 
-namespace BookifyTest.Core.ViewModels
+namespace Bookify.Web.Core.ViewModels
 {
     public class SubscriptionViewModel
     {

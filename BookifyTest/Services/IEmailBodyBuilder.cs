@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Services
+﻿namespace Bookify.Web.Services
 {
     public interface IEmailBodyBuilder
     {

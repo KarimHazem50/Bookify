@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Models
+﻿namespace Bookify.Web.Core.Models
 {
     [Index(nameof(Title), nameof(AuthorId), IsUnique = true)]
     public class Book : BaseModule

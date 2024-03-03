@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-namespace BookifyTest.Data
+namespace Bookify.Web.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {

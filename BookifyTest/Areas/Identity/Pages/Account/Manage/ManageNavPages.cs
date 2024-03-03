@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BookifyTest.Areas.Identity.Pages.Account.Manage
+namespace Bookify.Web.Areas.Identity.Pages.Account.Manage
 {
     public static class ManageNavPages
     {

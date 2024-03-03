@@ -1,5 +1,5 @@
-using BookifyTest.Seeds;
-using BookifyTest.Tasks;
+using Bookify.Web.Seeds;
+using Bookify.Web.Tasks;
 using Hangfire;
 using Hangfire.Dashboard;
 using Microsoft.AspNetCore.Identity;

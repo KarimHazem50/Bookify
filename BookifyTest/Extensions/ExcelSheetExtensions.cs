@@ -1,6 +1,6 @@
 ﻿using ClosedXML.Excel;
 
-namespace BookifyTest.Extensions
+namespace Bookify.Web.Extensions
 {
     public static class ExcelSheetExtensions
     {

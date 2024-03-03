@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BookifyTest.Core.Models
+namespace Bookify.Web.Core.Models
 {
     [Index(nameof(Email), IsUnique = true)]
     [Index(nameof(UserName), IsUnique = true)]

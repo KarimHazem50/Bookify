@@ -1,7 +1,7 @@
-﻿using BookifyTest.Core.Utilities;
+﻿using Bookify.Web.Core.Utilities;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
-namespace BookifyTest.Core.ViewModels
+namespace Bookify.Web.Core.ViewModels
 {
     public class BooksReportViewModel
     {

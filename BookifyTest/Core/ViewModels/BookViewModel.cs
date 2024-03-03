@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.ViewModels
+﻿namespace Bookify.Web.Core.ViewModels
 {
     public class BookViewModel
     {

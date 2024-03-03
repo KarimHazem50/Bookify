@@ -6,7 +6,7 @@ using System.Data;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace BookifyTest.Controllers
+namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Admin)]
     public class UsersController : Controller

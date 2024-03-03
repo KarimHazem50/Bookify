@@ -1,4 +1,4 @@
-﻿namespace BookifyTest.Core.Utilities
+﻿namespace Bookify.Web.Core.Utilities
 {
     public class PaginatedList<T> : List<T>
     {

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using System.Text.Encodings.Web;
 
-namespace BookifyTest.Areas.Identity.Pages.Account
+namespace Bookify.Web.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class RegisterModel : PageModel

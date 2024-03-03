@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace BookifyTest.Seeds
+namespace Bookify.Web.Seeds
 {
     public static class DefaultRoles
     {
