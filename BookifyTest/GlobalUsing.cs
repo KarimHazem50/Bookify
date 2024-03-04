@@ -1,9 +1,12 @@
 ﻿global using AutoMapper;
-global using Bookify.Web.Core.Consts;
-global using Bookify.Web.Core.Enums;
-global using Bookify.Web.Core.Models;
+global using Bookify.Application.Common.Interfaces;
+global using Bookify.Application.Common.Models;
+global using Bookify.Domain.Common;
+global using Bookify.Domain.Consts;
+global using Bookify.Domain.Entities;
+global using Bookify.Domain.Enums;
+global using Bookify.Infrastructure.Persistence;
 global using Bookify.Web.Core.ViewModels;
-global using Bookify.Web.Data;
 global using Bookify.Web.Extensions;
 global using Bookify.Web.Filters;
 global using Bookify.Web.Services;
