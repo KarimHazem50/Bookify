@@ -1,28 +1,26 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using SixLabors.ImageSharp;
-using System.Linq.Dynamic.Core;
 
 namespace Bookify.Web.Controllers
 {
     [Authorize(Roles = AppRoles.Archive)]
     public class BooksController : Controller
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IImageService _imageService;
 
-        public BooksController(IApplicationDbContext context, IMapper mapper, IWebHostEnvironment webHostEnvironment, IImageService imageService)
+        public BooksController(IMapper mapper, IWebHostEnvironment webHostEnvironment, IImageService imageService, IBookService bookService)
         {
-            _context = context;
             _mapper = mapper;
             _webHostEnvironment = webHostEnvironment;
             _imageService = imageService;
+            _bookService = bookService;
         }
         private BookFormViewModel PopulateData(BookFormViewModel? model = null)
         {
-            var authors = _context.Authors.Where(a => !a.IsDeleted).OrderBy(a => a.Name).ToList();
-            var categories = _context.Categories.Where(a => !a.IsDeleted).OrderBy(c => c.Name).ToList();
+            var authors = _bookService.GetAuthors();
+            var categories = _bookService.GetCategories();
 
             var viewModel = model is null ? new BookFormViewModel() : model;
 
@@ -40,39 +38,32 @@ namespace Bookify.Web.Controllers
         [HttpPost, IgnoreAntiforgeryToken]
         public IActionResult GetBooks()
         {
-            var start = int.Parse(Request.Form["start"]);
-            var pageSize = int.Parse(Request.Form["length"]);
+            var filteredDto = Request.Form.GetFilters();
 
-            var sortColumnIndex = Request.Form["order[0][column]"];
-            var sortColumnDirection = Request.Form["order[0][dir]"];
-            var sortColumnName = Request.Form[$"columns[{sortColumnIndex}][name]"];
+            var (books, recordsTotal) = _bookService.GetFiltered(filteredDto);
 
-            var searchValue = Request.Form["search[value]"];
-
-            IQueryable<Book> books = _context.Books.Include(b => b.Authors).Include(b => b.Categories).ThenInclude(c => c.Category);
-            if (!string.IsNullOrEmpty(searchValue))
-                books = books.Where(b => b.Title.Contains(searchValue) || b.Authors!.Name.Contains(searchValue));
-            books = books.OrderBy($"{sortColumnName} {sortColumnDirection}");
-
-            int recordsTotal = books.Count();
-            var data = books.Skip(start).Take(pageSize).ToList();
-            var mappedData = _mapper.Map<IEnumerable<BookViewModel>>(data);
+            var mappedData = _mapper.ProjectTo<BookRowViewModel>(books).ToList();
 
             var jsonData = new { recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = mappedData };
+
             return Ok(jsonData);
         }
         public IActionResult Details(int id)
         {
-            var book = _context.Books.Include(b => b.Authors).Include(b => b.BookCopies).Include(b => b.Categories).ThenInclude(c => c.Category).SingleOrDefault(b => b.Id == id);
-            if (book is null)
+            var books = _bookService.GetDetails();
+
+            var viewModel = _mapper.ProjectTo<BookViewModel>(books).SingleOrDefault(b => b.Id == id);
+
+            if (viewModel is null)
                 return NotFound();
-            var viewModel = _mapper.Map<BookViewModel>(book);
+
             return View(viewModel);
         }
         public IActionResult Create()
         {
             return View("Form", PopulateData());
         }
+
         [HttpPost]
         public async Task<IActionResult> Create(BookFormViewModel model)
         {
@@ -80,10 +71,7 @@ namespace Bookify.Web.Controllers
                 return View("Form", PopulateData(model));
 
             var book = _mapper.Map<Book>(model);
-            foreach (var category in model.SelectedCategories)
-            {
-                book.Categories.Add(new BookCategory { CategoryId = category });
-            }
+
             if (model.Image is not null)
             {
                 var extension = Path.GetExtension(model.Image.FileName);
@@ -101,30 +89,35 @@ namespace Bookify.Web.Controllers
                     return View("Form", PopulateData(model));
                 }
             }
-            book.CreatedById = User.GetUserId();
-            _context.Books.Add(book);
-            _context.SaveChanges();
+
+            _bookService.Add(book, model.SelectedCategories, User.GetUserId());
 
             return RedirectToAction(nameof(Details), new { id = book.Id });
         }
+
         public IActionResult Edit(int id)
         {
-            var book = _context.Books.Include(b => b.Categories).SingleOrDefault(b => b.Id == id);
+            var book = _bookService.GetWithCategories(id);
+
             if (book is null)
                 return NotFound();
+
             var model = _mapper.Map<BookFormViewModel>(book);
             var viewModel = PopulateData(model);
+
             viewModel.SelectedCategories = book.Categories.Select(c => c.CategoryId).ToList();
 
             return View("Form", viewModel);
         }
+
         [HttpPost]
         public async Task<IActionResult> Edit(BookFormViewModel model)
         {
             if (!ModelState.IsValid)
                 return View("Form", PopulateData(model));
 
-            var book = _context.Books.Include(b => b.Categories).Include(b => b.BookCopies).SingleOrDefault(b => b.Id == model.Id);
+            var book = _bookService.GetWithCategoriesAndCopies(model.Id);
+
             if (book is null)
                 return NotFound();
 
@@ -157,43 +150,24 @@ namespace Bookify.Web.Controllers
             }
 
             book = _mapper.Map(model, book);
-            book.LastUpdatedOn = DateTime.Now;
-            book.LastUpdatedById = User.GetUserId();
 
-            book.Categories.Clear();
-            foreach (var category in model.SelectedCategories)
-            {
-                book.Categories.Add(new BookCategory { CategoryId = category });
-            }
+            _bookService.Update(book, model.SelectedCategories, User.GetUserId());
 
-            if (!model.IsAvailableForRental)
-            {
-                foreach (var copy in book.BookCopies)
-                {
-                    copy.IsAvailableForRental = false;
-                }
-            }
-
-            _context.SaveChanges();
             return RedirectToAction(nameof(Details), new { id = book.Id });
         }
+
         public IActionResult AllowedItem(BookFormViewModel model)
         {
-            var book = _context.Books.SingleOrDefault(b => b.Title == model.Title && b.AuthorId == model.AuthorId);
-            var isAllowed = book is null || book.Id.Equals(model.Id);
-            return Json(isAllowed);
+            return Json(_bookService.AllowedItem(model.Title, model.Id, model.AuthorId));
         }
 
         [HttpPost]
         public IActionResult ToggleStatus(int id)
         {
-            var book = _context.Books.Find(id);
+            var book = _bookService.ToggleStatus(id, User.GetUserId());
+
             if (book is null)
                 return NotFound();
-            book.IsDeleted = !book.IsDeleted;
-            book.LastUpdatedOn = DateTime.Now;
-            book.LastUpdatedById = User.GetUserId();
-            _context.SaveChanges();
 
             var viewModel = _mapper.Map<BookViewModel>(book);
             return Ok(viewModel);

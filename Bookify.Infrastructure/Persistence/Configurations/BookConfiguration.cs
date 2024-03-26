@@ -7,7 +7,7 @@
             builder.HasIndex(e => new { e.Title, e.AuthorId }).IsUnique();
 
             builder.Property(e => e.CreatedOn).HasDefaultValueSql("GETDATE()");
-            builder.Property(e => e.Title).HasMaxLength(100);
+            builder.Property(e => e.Title).HasMaxLength(500);
             builder.Property(e => e.Publisher).HasMaxLength(200);
             builder.Property(e => e.Hall).HasMaxLength(50);
         }

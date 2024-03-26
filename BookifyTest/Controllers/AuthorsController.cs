@@ -3,43 +3,44 @@
     [Authorize(Roles = AppRoles.Archive)]
     public class AuthorsController : Controller
     {
-        private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IAuthorService _authorService;
 
-        public AuthorsController(IApplicationDbContext context, IMapper mapper)
+        public AuthorsController(IMapper mapper, IAuthorService authorService)
         {
-            _context = context;
             _mapper = mapper;
+            _authorService = authorService;
         }
 
         public IActionResult Index()
         {
-            var authors = _context.Authors.AsNoTracking().ToList();
+            var authors = _authorService.GetAll();
             var viewModel = _mapper.Map<IEnumerable<AuthorViewModel>>(authors);
             return View(viewModel);
         }
+
         [AjaxOnly]
         public IActionResult Create()
         {
             return PartialView("_Form");
         }
+
         [HttpPost]
         public IActionResult Create(AuthorFormViewModel model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var author = _mapper.Map<Author>(model);
-            author.CreatedById = User.GetUserId();
-            _context.Authors.Add(author);
-            _context.SaveChanges();
+
+            var author = _authorService.Add(model.Name, User.GetUserId());
 
             var viewModel = _mapper.Map<AuthorViewModel>(author);
             return PartialView("_AuthorRow", viewModel);
         }
+
         [AjaxOnly]
         public IActionResult Edit(int id)
         {
-            var author = _context.Authors.Find(id);
+            var author = _authorService.GetById(id);
             if (author is null)
                 return NotFound();
             var viewModel = _mapper.Map<AuthorFormViewModel>(author);
@@ -51,34 +52,27 @@
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var author = _context.Authors.Find(model.Id);
+            var author = _authorService.Update(model.Id, model.Name, User.GetUserId());
+
             if (author is null)
                 return NotFound();
 
-            _mapper.Map(model, author);
-            author.LastUpdatedOn = DateTime.Now;
-            author.LastUpdatedById = User.GetUserId();
-            _context.SaveChanges();
             var viewModel = _mapper.Map<AuthorViewModel>(author);
             return PartialView("_AuthorRow", viewModel);
         }
+
         public IActionResult AllowedItem(AuthorFormViewModel model)
         {
-            var author = _context.Authors.FirstOrDefault(a => a.Name == model.Name);
-            var IsAllowed = author is null || author.Id.Equals(model.Id);
-            return Json(IsAllowed);
+            return Json(_authorService.AllowAuthor(model.Id, model.Name));
         }
+
         [HttpPost]
         public IActionResult ToggleStatus(int id)
         {
-            var author = _context.Authors.Find(id);
+            var author = _authorService.ToggleStatus(id, User.GetUserId());
+
             if (author is null)
                 return NotFound();
-
-            author.IsDeleted = !author.IsDeleted;
-            author.LastUpdatedOn = DateTime.Now;
-            author.LastUpdatedById = User.GetUserId();
-            _context.SaveChanges();
 
             var viewModel = _mapper.Map<AuthorViewModel>(author);
             return PartialView("_AuthorRow", viewModel);

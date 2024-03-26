@@ -5,23 +5,23 @@ namespace Bookify.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IBookService _bookService;
         private readonly ILogger<HomeController> _logger;
         private readonly IMapper _mapper;
         private readonly IHashids _hashids;
-        public HomeController(IApplicationDbContext context, ILogger<HomeController> logger, IMapper mapper, IHashids hashids)
+        public HomeController(ILogger<HomeController> logger, IMapper mapper, IHashids hashids, IBookService bookService)
         {
-            _context = context;
             _logger = logger;
             _mapper = mapper;
             _hashids = hashids;
+            _bookService = bookService;
         }
         public IActionResult Index()
         {
             if (User.Identity!.IsAuthenticated)
                 return RedirectToAction(nameof(Index), "Dashboard");
 
-            var newlyAddedBooks = _context.Books.Where(b => !b.IsDeleted).Include(b => b.Authors).OrderByDescending(b => b.Id).Take(10).ToList();
+            var newlyAddedBooks = _bookService.GetLastAddedBooks(10);
             var viewModel = _mapper.Map<IEnumerable<BookViewModel>>(newlyAddedBooks);
             foreach (BookViewModel bookViewModel in viewModel)
             {

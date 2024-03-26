@@ -34,7 +34,6 @@ namespace Bookify.Web.Controllers
             return View();
         }
 
-
         #region Books
         public IActionResult Books(int? pageNumber, IList<int> selectedAuthors, IList<int> selectedCategories)
         {

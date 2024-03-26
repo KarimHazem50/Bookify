@@ -1,6 +1,7 @@
 ﻿global using AutoMapper;
 global using Bookify.Application.Common.Interfaces;
 global using Bookify.Application.Common.Models;
+global using Bookify.Application.Services;
 global using Bookify.Domain.Common;
 global using Bookify.Domain.Consts;
 global using Bookify.Domain.Entities;

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Bookify.Domain.Dtos;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.WebUtilities;
@@ -11,38 +11,35 @@ namespace Bookify.Web.Controllers
     [Authorize(Roles = AppRoles.Admin)]
     public class UsersController : Controller
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthService _authService;
         private readonly IMapper _mapper;
         private readonly IEmailSender _emailSender;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IEmailBodyBuilder _emailBodyBuilder;
 
 
-        public UsersController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IMapper mapper, IEmailSender emailSender, IWebHostEnvironment webHostEnvironment, IEmailBodyBuilder emailBodyBuilder)
+        public UsersController(IAuthService authService, IMapper mapper, IEmailSender emailSender, IEmailBodyBuilder emailBodyBuilder)
         {
-            _userManager = userManager;
-            _roleManager = roleManager;
+            _authService = authService;
             _mapper = mapper;
             _emailSender = emailSender;
-            _webHostEnvironment = webHostEnvironment;
             _emailBodyBuilder = emailBodyBuilder;
         }
 
         public async Task<IActionResult> Index()
         {
-            var users = await _userManager.Users.ToListAsync();
+            var users = await _authService.GetUsersAsync();
             var viewModel = _mapper.Map<IEnumerable<UsersViewModel>>(users);
             return View(viewModel);
         }
+
         [AjaxOnly]
         public async Task<IActionResult> Create()
         {
+            var roles = await _authService.GetRolesAsync();
             var viewModel = new UserFormViewModel
             {
-                DisplayRoles = await _roleManager.Roles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name }).ToListAsync()
+                DisplayRoles = roles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name })
             };
-
             return PartialView("_Form", viewModel);
         }
 
@@ -52,26 +49,18 @@ namespace Bookify.Web.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            ApplicationUser user = new()
+            var dto = _mapper.Map<CreateUserDto>(model);
+            var result = await _authService.AddUserAsync(dto, User.GetUserId());
+
+            if (result.IsSucceeded)
             {
-                FullName = model.FullName,
-                UserName = model.UserName,
-                Email = model.Email,
-                CreatedById = User.GetUserId()
-            };
+                var user = result.User;
 
-            var result = await _userManager.CreateAsync(user, model.Password);
-
-            if (result.Succeeded)
-            {
-                await _userManager.AddToRolesAsync(user, model.SelectedRoles);
-
-                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(result.VerificationCode!));
                 var callbackUrl = Url.Page(
                     "/Account/ConfirmEmail",
                     pageHandler: null,
-                    values: new { area = "Identity", userId = user.Id, code },
+                    values: new { area = "Identity", userId = user!.Id, code },
                     protocol: Request.Scheme);
 
                 var placehoders = new Dictionary<string, string>()
@@ -91,41 +80,24 @@ namespace Bookify.Web.Controllers
                 return PartialView("_UserRow", viewModel);
             }
 
-            return BadRequest(string.Join(",", result.Errors.Select(e => e.Description)));
+            return BadRequest(string.Join(",", result.Errors!));
         }
         public async Task<IActionResult> AllowEmail(UserFormViewModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.Email);
-
-            var IsAllowed = user is null || user.Id == model.Id;
-
-            return Json(IsAllowed);
+            return Json(await _authService.AllowEmailAsync(model.Id, model.Email));
         }
         public async Task<IActionResult> AllowUserName(UserFormViewModel model)
         {
-            var user = await _userManager.FindByNameAsync(model.UserName);
-
-            var IsAllowed = user is null || user.Id == model.Id;
-
-            return Json(IsAllowed);
+            return Json(await _authService.AllowUserNameAsync(model.Id, model.UserName));
         }
 
         [HttpPost]
         public async Task<IActionResult> ToggleStatus(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _authService.ToggleStatusAsync(id, User.GetUserId());
+
             if (user is null)
                 return NotFound();
-
-            user.IsDeleted = !user.IsDeleted;
-            user.LastUpdatedById = User.GetUserId();
-            user.LastUpdatedOn = DateTime.Now;
-            await _userManager.UpdateAsync(user);
-
-            if (user.IsDeleted)
-            {
-                await _userManager.UpdateSecurityStampAsync(user);
-            }
 
             var viewModel = _mapper.Map<UsersViewModel>(user);
             return PartialView("_UserRow", viewModel);
@@ -134,7 +106,7 @@ namespace Bookify.Web.Controllers
         [AjaxOnly]
         public async Task<IActionResult> ResetPassword(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _authService.GetByIdAsync(id);
             if (user is null)
                 return NotFound();
             return PartialView("_FormResetPassword");
@@ -145,43 +117,39 @@ namespace Bookify.Web.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var user = await _userManager.FindByIdAsync(model.Id);
+
+            var user = await _authService.GetByIdAsync(model.Id);
             if (user is null)
                 return NotFound();
 
-            var currentPassword = user.PasswordHash;
-            await _userManager.RemovePasswordAsync(user);
-            var result = await _userManager.AddPasswordAsync(user, model.Password);
-            if (result.Succeeded)
-            {
-                user.LastUpdatedOn = DateTime.Now;
-                user.LastUpdatedById = User.GetUserId();
-                await _userManager.UpdateAsync(user);
+            var result = await _authService.ResetPasswordAsync(user, model.Password, User.GetUserId());
 
+            if (result.IsSucceeded)
+            {
                 var viewModel = _mapper.Map<UsersViewModel>(user);
                 return PartialView("_UserRow", viewModel);
             }
-
-            user.PasswordHash = currentPassword;
-            await _userManager.UpdateAsync(user);
-            return BadRequest(string.Join(",", result.Errors.Select(e => e.Description)));
+            return BadRequest(string.Join(",", result.Errors!));
         }
 
         [AjaxOnly]
         public async Task<IActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _authService.GetByIdAsync(id);
             if (user == null)
                 return NotFound();
 
+
+            var roles = await _authService.GetRolesAsync();
+            var s = roles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name });
             UserFormViewModel viewModel = new()
             {
                 Id = user.Id,
                 FullName = user.FullName,
                 UserName = user.UserName,
                 Email = user.Email,
-                DisplayRoles = await _roleManager.Roles.Select(r => new SelectListItem { Text = r.Name, Value = r.Name }).ToListAsync(),
-                SelectedRoles = await _userManager.GetRolesAsync(user),
+                DisplayRoles = (await _authService.GetRolesAsync()).Select(r => new SelectListItem { Text = r.Name, Value = r.Name }),
+                SelectedRoles = await _authService.GetRolesAsync(user),
             };
             return PartialView("_Form", viewModel);
         }
@@ -192,57 +160,30 @@ namespace Bookify.Web.Controllers
             if (!ModelState.IsValid)
                 return BadRequest();
 
-            var user = await _userManager.FindByIdAsync(model.Id);
+            var user = await _authService.GetByIdAsync(model.Id);
             if (user == null)
                 return NotFound();
 
-            user.FullName = model.FullName;
-            user.UserName = model.UserName;
-            user.Email = model.Email;
-            user.LastUpdatedOn = DateTime.Now;
-            user.LastUpdatedById = User.GetUserId();
+            _mapper.Map(model, user);
 
-            var result = await _userManager.UpdateAsync(user);
+            var result = await _authService.UpdateUserAsync(user, model.SelectedRoles, User.GetUserId());
 
-            if (result.Succeeded)
+            if (result.IsSucceeded)
             {
-                //var currentRoles = await _userManager.GetRolesAsync(user);
-                //var rolesUpdated = !currentRoles.SequenceEqual(model.SelectedRoles);
-                //if (rolesUpdated)
-                //{
-                //    await _userManager.RemoveFromRolesAsync(user, currentRoles);
-                //    await _userManager.AddToRolesAsync(user, model.SelectedRoles);
-                //}
-
-                var currentRoles = await _userManager.GetRolesAsync(user);
-
-                await _userManager.RemoveFromRolesAsync(user, currentRoles.Except(model.SelectedRoles));
-                await _userManager.AddToRolesAsync(user, model.SelectedRoles.Except(currentRoles));
-
-                await _userManager.UpdateSecurityStampAsync(user);
-
-                var viewModel = _mapper.Map<UsersViewModel>(user);
+                var viewModel = _mapper.Map<UsersViewModel>(result.User);
                 return PartialView("_UserRow", viewModel);
             }
 
-            return BadRequest(string.Join(",", result.Errors.Select(e => e.Description)));
+            return BadRequest(string.Join(",", result.Errors!));
         }
 
         [HttpPost]
         public async Task<IActionResult> UnLock(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await _authService.UnLockAsync(id, User.GetUserId());
             if (user == null)
                 return NotFound();
 
-            var isLocked = await _userManager.IsLockedOutAsync(user);
-            if (isLocked)
-            {
-                await _userManager.SetLockoutEndDateAsync(user, null);
-                user.LastUpdatedOn = DateTime.Now;
-                user.LastUpdatedById = User.GetUserId();
-                await _userManager.UpdateAsync(user);
-            }
             var viewModel = _mapper.Map<UsersViewModel>(user);
             return PartialView("_UserRow", viewModel);
         }

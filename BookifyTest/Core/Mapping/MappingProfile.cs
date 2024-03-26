@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Bookify.Domain.Dtos;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Bookify.Web.Core.Mapping
 {
@@ -22,9 +23,14 @@ namespace Bookify.Web.Core.Mapping
 
             //Books
             CreateMap<BookFormViewModel, Book>().ReverseMap();
+
             CreateMap<Book, BookViewModel>()
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Authors!.Name))
                 .ForMember(dest => dest.CategoriesNames, opt => opt.MapFrom(src => src.Categories.Select(c => c.Category!.Name).ToList()));
+
+            CreateMap<Book, BookRowViewModel>()
+               .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Authors!.Name))
+               .ForMember(dest => dest.CategoriesNames, opt => opt.MapFrom(src => src.Categories.Select(c => c.Category!.Name).ToList()));
 
             CreateMap<BookCopy, BookCopyViewModel>()
                 .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book!.Title))
@@ -34,8 +40,20 @@ namespace Bookify.Web.Core.Mapping
             CreateMap<BookCopy, BookCopyFormViewModel>()
                 .ForMember(dest => dest.ShowRentalInput, opt => opt.MapFrom(src => src.Book!.IsAvailableForRental));
 
+            CreateMap<Book, BookSearchResultViewModel>()
+                .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Authors!.Name));
+
+            CreateMap<BookDto, BookViewModel>();
+
             // Users
             CreateMap<ApplicationUser, UsersViewModel>();
+
+            CreateMap<UserFormViewModel, CreateUserDto>();
+
+            CreateMap<UserFormViewModel, ApplicationUser>()
+                 .ForMember(dest => dest.NormalizedEmail, opt => opt.MapFrom(src => src.Email.ToUpper()))
+                 .ForMember(dest => dest.NormalizedUserName, opt => opt.MapFrom(src => src.UserName.ToUpper()))
+                 .ReverseMap();
 
             // Subscribers
             CreateMap<Governorate, SelectListItem>()
@@ -65,6 +83,10 @@ namespace Bookify.Web.Core.Mapping
             CreateMap<RentalCopy, CopyHistoryViewModel>()
                .ForMember(dest => dest.SubscriberMobile, opt => opt.MapFrom(src => src.Rental!.Subscriber!.MobileNumber))
                .ForMember(dest => dest.SubscriberName, opt => opt.MapFrom(src => $"{src.Rental!.Subscriber!.FirstName} {src.Rental!.Subscriber!.LastName}"));
+
+            //General
+            CreateMap<KeyValuePairDto, ChartItemViewModel>()
+                .ForMember(dest => dest.Label, opt => opt.MapFrom(src => src.Key));
         }
     }
 }

@@ -3,61 +3,39 @@
     [Authorize]
     public class DashboardController : Controller
     {
-        private readonly IApplicationDbContext _context;
+        private readonly IBookService _bookService;
+        private readonly ISubscriberService _subscriberService;
+        private readonly IRentalService _rentalService;
         private readonly IMapper _mapper;
 
-        public DashboardController(IApplicationDbContext context, IMapper mapper)
+        public DashboardController(IBookService bookService, ISubscriberService subscriberService, IRentalService rentalService, IMapper mapper)
         {
-            _context = context;
+            _bookService = bookService;
+            _subscriberService = subscriberService;
+            _rentalService = rentalService;
             _mapper = mapper;
         }
 
         public IActionResult Index()
         {
-            var numberOfCopies = _context.BookCopies.Count(c => !c.IsDeleted);
+            var numberOfCopies = _bookService.GetActiveBooksCount();
             numberOfCopies = numberOfCopies <= 10 ? numberOfCopies : numberOfCopies / 10 * 10;
 
-            var numberOfSubscribers = _context.Subscribers.Count(s => !s.IsDeleted);
+            var numberOfSubscribers = _subscriberService.GetActiveSubscribersCount();
 
-            var lastAddBooks = _context.Books.Where(b => !b.IsDeleted).Include(b => b.Authors).OrderByDescending(b => b.Id).Take(8).ToList();
+            var lastAddedBooks = _bookService.GetLastAddedBooks(8);
 
-            var topBooks = _context.RentalCopies.Include(rc => rc.BookCopy).ThenInclude(c => c!.Book).ThenInclude(b => b!.Authors)
-                                            .GroupBy(rc => new
-                                            {
-                                                rc.BookCopy!.BookId,
-                                                rc.BookCopy.Book!.Title,
-                                                rc.BookCopy.Book.ImageName,
-                                                AuthorName = rc.BookCopy.Book.Authors!.Name
-                                            })
-                                            .Select(b => new
-                                            {
-                                                b.Key.BookId,
-                                                b.Key.Title,
-                                                b.Key.ImageName,
-                                                b.Key.AuthorName,
-                                                Count = b.Count()
-                                            })
-                                            .OrderByDescending(b => b.Count)
-                                            .Take(6)
-                                            .Select(b => new BookViewModel
-                                            {
-                                                Id = b.BookId,
-                                                Title = b.Title,
-                                                ImageName = b.ImageName,
-                                                AuthorName = b.AuthorName
-                                            })
-                                            .ToList();
+            var topBooks = _bookService.GetTopBooks(6);
 
             var viewModel = new DashboardViewModel
             {
                 NumberOfCopies = numberOfCopies,
                 NumberOfSubscribers = numberOfSubscribers,
-                LastAddBooks = _mapper.Map<IEnumerable<BookViewModel>>(lastAddBooks),
-                TopBooks = topBooks
+                LastAddBooks = _mapper.Map<IEnumerable<BookViewModel>>(lastAddedBooks),
+                TopBooks = _mapper.Map<IEnumerable<BookViewModel>>(topBooks)
             };
             return View(viewModel);
         }
-
 
         [AjaxOnly]
         public IActionResult GetRentalsPerDay(DateTime? startDate, DateTime? endDate)
@@ -65,51 +43,17 @@
             startDate ??= DateTime.Today.AddDays(-29);
             endDate ??= DateTime.Today;
 
-            var data = _context.RentalCopies.Where(rc => rc.RentalDate >= startDate && rc.RentalDate <= endDate)
-                                    .GroupBy(rc => new
-                                    {
-                                        rc.RentalDate,
-                                    })
-                                    .Select(g => new ChartItemViewModel
-                                    {
-                                        Label = g.Key.RentalDate.ToString("d MMM"),
-                                        Value = g.Count().ToString(),
-                                    })
-                                    .ToList();
+            var data = _rentalService.GetRentalsPerDay(startDate, endDate);
 
-            for (var day = startDate; day <= endDate; day = day.Value.AddDays(1))
-            {
-                if (!data.Any(d => d.Label == day.Value.ToString("d MMM")))
-                {
-                    data.Add(new ChartItemViewModel
-                    {
-                        Label = day.Value.ToString("d MMM"),
-                        Value = "0",
-                    });
-                }
-            }
-
-
-            var orderedData = data.OrderBy(d => int.Parse(d.Label!.Split(" ")[0]));
-            return Ok(orderedData);
+            return Ok(_mapper.Map<IEnumerable<ChartItemViewModel>>(data));
         }
 
         [AjaxOnly]
         public IActionResult GetSubscribersByCity()
         {
-            var data = _context.Subscribers.Where(s => !s.IsDeleted).Include(s => s.Governorate)
-                                          .GroupBy(s => new
-                                          {
-                                              City = s.Governorate!.Name
-                                          })
-                                          .Select(g => new ChartItemViewModel
-                                          {
-                                              Label = g.Key.City,
-                                              Value = g.Count().ToString()
-                                          })
-                                          .ToList();
+            var data = _subscriberService.GetSubscribersPerCity();
 
-            return Ok(data);
+            return Ok(_mapper.Map<IEnumerable<ChartItemViewModel>>(data));
         }
     }
 }

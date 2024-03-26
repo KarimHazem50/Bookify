@@ -25,7 +25,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
             modelBuilder.HasSequence<int>("SerialNumber", "shared")
                 .StartsAt(1000001L);
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -41,7 +41,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -118,7 +120,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Area", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Area", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -130,7 +132,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("GovernorateId")
                         .HasColumnType("int");
@@ -160,10 +164,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("Name", "GovernorateId")
                         .IsUnique();
 
-                    b.ToTable("Areas", (string)null);
+                    b.ToTable("Areas");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Author", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Author", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -175,7 +179,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -200,10 +206,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Book", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Book", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -218,7 +224,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -271,10 +279,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("Title", "AuthorId")
                         .IsUnique();
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.BookCategory", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.BookCategory", b =>
                 {
                     b.Property<int>("BookId")
                         .HasColumnType("int");
@@ -286,10 +294,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("BooksCategories", (string)null);
+                    b.ToTable("BooksCategories");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.BookCopy", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.BookCopy", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,7 +312,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<int>("EditionNumber")
                         .HasColumnType("int");
@@ -334,10 +344,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("LastUpdatedById");
 
-                    b.ToTable("BookCopies", (string)null);
+                    b.ToTable("BookCopies");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Category", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -349,7 +359,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -374,10 +386,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Governorate", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Governorate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -389,7 +401,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -414,10 +428,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Governorates", (string)null);
+                    b.ToTable("Governorates");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Rental", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Rental", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -429,7 +443,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -444,7 +460,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("bit");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CAST(GETDATE() AS DATE)");
 
                     b.Property<int>("SubScriberId")
                         .HasColumnType("int");
@@ -457,10 +475,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SubScriberId");
 
-                    b.ToTable("Rentals", (string)null);
+                    b.ToTable("Rentals");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.RentalCopy", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.RentalCopy", b =>
                 {
                     b.Property<int>("BookCopyId")
                         .HasColumnType("int");
@@ -478,16 +496,18 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("ReturnDate")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("CAST(GETDATE() AS DATE)");
 
                     b.HasKey("BookCopyId", "RentalId");
 
                     b.HasIndex("RentalId");
 
-                    b.ToTable("RentalCopies", (string)null);
+                    b.ToTable("RentalCopies");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Subscriber", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Subscriber", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -507,7 +527,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTime>("DateOfBirth")
                         .HasColumnType("datetime2");
@@ -579,10 +601,10 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.HasIndex("NationalId")
                         .IsUnique();
 
-                    b.ToTable("Subscribers", (string)null);
+                    b.ToTable("Subscribers");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Subscription", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -594,7 +616,9 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
@@ -611,7 +635,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("SubscriberId");
 
-                    b.ToTable("Subscriptions", (string)null);
+                    b.ToTable("Subscriptions");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -747,19 +771,19 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Area", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Area", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.Governorate", "Governorate")
+                    b.HasOne("Bookify.Domain.Entities.Governorate", "Governorate")
                         .WithMany("Areas")
                         .HasForeignKey("GovernorateId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -770,13 +794,13 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Author", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Author", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -785,19 +809,19 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Book", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Book", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.Author", "Authors")
+                    b.HasOne("Bookify.Domain.Entities.Author", "Authors")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -808,15 +832,15 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.BookCategory", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.BookCategory", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.Book", "Book")
+                    b.HasOne("Bookify.Domain.Entities.Book", "Book")
                         .WithMany("Categories")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.Category", "Category")
+                    b.HasOne("Bookify.Domain.Entities.Category", "Category")
                         .WithMany("Books")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -827,19 +851,19 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.BookCopy", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.BookCopy", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.Book", "Book")
+                    b.HasOne("Bookify.Domain.Entities.Book", "Book")
                         .WithMany("BookCopies")
                         .HasForeignKey("BookId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -850,13 +874,13 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Category", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Category", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -865,13 +889,13 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Governorate", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Governorate", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -880,17 +904,17 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Rental", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Rental", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.Subscriber", "Subscriber")
+                    b.HasOne("Bookify.Domain.Entities.Subscriber", "Subscriber")
                         .WithMany("Rentals")
                         .HasForeignKey("SubScriberId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -903,15 +927,15 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("Subscriber");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.RentalCopy", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.RentalCopy", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.BookCopy", "BookCopy")
+                    b.HasOne("Bookify.Domain.Entities.BookCopy", "BookCopy")
                         .WithMany("RentalCopies")
                         .HasForeignKey("BookCopyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.Rental", "Rental")
+                    b.HasOne("Bookify.Domain.Entities.Rental", "Rental")
                         .WithMany("RentalCopies")
                         .HasForeignKey("RentalId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -922,25 +946,25 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("Rental");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Subscriber", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Subscriber", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.Area", "Area")
+                    b.HasOne("Bookify.Domain.Entities.Area", "Area")
                         .WithMany()
                         .HasForeignKey("AreaId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.Governorate", "Governorate")
+                    b.HasOne("Bookify.Domain.Entities.Governorate", "Governorate")
                         .WithMany()
                         .HasForeignKey("GovernorateId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "LastUpdatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "LastUpdatedBy")
                         .WithMany()
                         .HasForeignKey("LastUpdatedById");
 
@@ -953,13 +977,13 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                     b.Navigation("LastUpdatedBy");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Subscription", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Subscription", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", "CreatedBy")
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", "CreatedBy")
                         .WithMany()
                         .HasForeignKey("CreatedById");
 
-                    b.HasOne("Bookify.Web.Core.Models.Subscriber", "Subscriber")
+                    b.HasOne("Bookify.Domain.Entities.Subscriber", "Subscriber")
                         .WithMany("Subscriptions")
                         .HasForeignKey("SubscriberId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -981,7 +1005,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", null)
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -990,7 +1014,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", null)
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1005,7 +1029,7 @@ namespace Bookify.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", null)
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1014,41 +1038,41 @@ namespace Bookify.Infrastructure.Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Bookify.Web.Core.Models.ApplicationUser", null)
+                    b.HasOne("Bookify.Domain.Entities.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Book", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Book", b =>
                 {
                     b.Navigation("BookCopies");
 
                     b.Navigation("Categories");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.BookCopy", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.BookCopy", b =>
                 {
                     b.Navigation("RentalCopies");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Category", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Books");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Governorate", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Governorate", b =>
                 {
                     b.Navigation("Areas");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Rental", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Rental", b =>
                 {
                     b.Navigation("RentalCopies");
                 });
 
-            modelBuilder.Entity("Bookify.Web.Core.Models.Subscriber", b =>
+            modelBuilder.Entity("Bookify.Domain.Entities.Subscriber", b =>
                 {
                     b.Navigation("Rentals");
 
